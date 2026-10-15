@@ -124,6 +124,11 @@ async function loadConfig() {
     console.error(`config.json の次の項目が未入力です: ${missing.join(', ')}`);
     process.exit(1);
   }
+  // 形式が違うIDでもAPIはリンクを返すが、押すと楽天のトップに飛ばされ報酬が付かない
+  if (!/^[0-9a-f]{8}(\.[0-9a-f]{8}){3}$/i.test(cfg.affiliateId)) {
+    console.error('config.json の affiliateId の形式が違います（例: 1a2b3c4d.5e6f7a8b.9c0d1e2f.3a4b5c6d）。「ID」などの文字や空白が混ざっていないか確認してください。');
+    process.exit(1);
+  }
   return cfg;
 }
 
