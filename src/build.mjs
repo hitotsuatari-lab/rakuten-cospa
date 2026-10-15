@@ -59,8 +59,21 @@ function topicHtml(p) {
   );
 }
 
+// 一番新しい比較（＝最新の動画）を上に大きく出し、残りを一覧にする
 function indexHtml(list) {
-  const items = list
+  const [latest, ...rest] = list;
+  const top = latest?.ranking[0];
+  const featured = latest
+    ? `
+  <a class="featured" href="${esc(latest.slug)}.html">
+    <span class="badge">最新の比較</span>
+    <span class="ft">${esc(latest.title)}</span>
+    ${top ? `<span class="fs">1位 ${esc(shortName(top.name, 24))}　${esc(latest.servingLabel)} ${top.perServing.toFixed(1)}円</span>` : ''}
+    <span class="fd">${formatDate(latest.fetchedAt)} 時点${latest.sample ? '・サンプル' : ''}</span>
+    <span class="btn">ランキングを見る</span>
+  </a>`
+    : '';
+  const items = rest
     .map(
       (p) => `
     <li><a href="${esc(p.slug)}.html"><span class="t">${esc(p.title)}</span><span class="d">${formatDate(p.fetchedAt)}${p.sample ? '・サンプル' : ''}</span></a></li>`,
@@ -70,9 +83,10 @@ function indexHtml(list) {
     config.siteName,
     `
   <h1>${esc(config.siteName)}</h1>
-  <p class="lead">楽天の売れ筋を「1個あたり・1食あたり」の値段で比べています。動画で紹介した商品はここから見られます。</p>
+  <p class="lead">楽天の売れ筋を「1個あたり・1食あたり」の値段で比べています。動画で紹介した商品はここから見られます。</p>${featured}
+  ${rest.length ? `<h2>これまでの比較</h2>
   <ul class="topics">${items}
-  </ul>`,
+  </ul>` : ''}`,
   );
 }
 
@@ -108,7 +122,7 @@ ${lines.join('\n')}
 ※価格は${formatDate(p.fetchedAt)}時点です。最新の価格は楽天の商品ページで確認してください。
 ※楽天アフィリエイトを利用しています。
 ※動画の一部はAIツールを使って作成しています。
-
+${config.voiceCredit ? `音声: ${config.voiceCredit}\n` : ''}
 #楽天 #コスパ #節約 #${config.siteName}
 `;
 }
@@ -131,10 +145,15 @@ function esc(s) {
 }
 
 async function loadSiteConfig() {
+  // 動画の読み上げに使う声のクレジット（VOICEVOXの利用条件）
+  let voiceCredit = null;
+  try {
+    voiceCredit = JSON.parse(await readFile(path.join(ROOT, 'video', 'voice.json'), 'utf8')).credit;
+  } catch {}
   for (const name of ['config.json', 'config.example.json']) {
     try {
       const cfg = JSON.parse(await readFile(path.join(ROOT, name), 'utf8'));
-      return { siteName: cfg.siteName ?? '比較ページ', siteUrl: cfg.siteUrl };
+      return { siteName: cfg.siteName ?? '比較ページ', siteUrl: cfg.siteUrl, voiceCredit };
     } catch {}
   }
   throw new Error('config.json も config.example.json も見つかりません');
@@ -166,6 +185,14 @@ h1{font-size:22px;margin:16px 0 4px;font-weight:600}
 .bar div{height:100%;background:var(--bar)}
 .item.top .bar div{background:var(--accent)}
 .btn{display:inline-block;margin-top:8px;padding:8px 18px;background:var(--btn);color:var(--btn-text);border-radius:8px;text-decoration:none;font-size:14px;font-weight:600}
+.featured{display:block;margin:16px 0 8px;padding:18px;background:var(--card);border:2px solid var(--accent);border-radius:14px;color:var(--text);text-decoration:none}
+.featured span{display:block}
+.featured .badge{display:inline-block;font-size:12px;font-weight:600;color:var(--btn-text);background:var(--accent);padding:2px 10px;border-radius:999px}
+.featured .ft{font-size:20px;font-weight:700;margin-top:8px}
+.featured .fs{font-size:14px;margin-top:4px}
+.featured .fd{font-size:13px;color:var(--sub)}
+.featured .btn{display:inline-block}
+h2{font-size:16px;margin:24px 0 8px;color:var(--sub);font-weight:600}
 .topics{list-style:none;padding:0}
 .topics a{display:flex;justify-content:space-between;gap:12px;padding:14px;background:var(--card);border:1px solid var(--line);border-radius:12px;margin-bottom:10px;color:var(--text);text-decoration:none}
 .topics .d{color:var(--sub);font-size:13px;white-space:nowrap}

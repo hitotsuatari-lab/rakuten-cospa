@@ -57,6 +57,7 @@ ranked.sort((a, b) => a.perServing - b.perServing);
 const out = {
   slug: topic.slug,
   title: topic.title,
+  name: topic.name,
   measure,
   perServing: topic.perServing,
   servingLabel: topic.servingLabel,

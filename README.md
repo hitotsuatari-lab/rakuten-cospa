@@ -14,7 +14,16 @@ node src/fetch.mjs topics/pasta.json   楽天から取得して data/ に保存
 node src/build.mjs                     docs/ と out/ を作り直す
 node src/serve.mjs                     http://localhost:8080/ で公開前に確認
 node src/prepare-upload.mjs            公開してよいファイルだけを ../upload-github/ に集める
+node video/render.mjs videos/pasta.json  読み上げ付きの縦型ショートを out/pasta-short.mp4 に書き出す（約3分）
 ```
+
+動画を作る前に **VOICEVOX のアプリを起動**しておきます（声は青山龍星。`video/voice.json` で変更）。
+読み上げの品名がおかしいときは、`videos/pasta.json` の `speakNames` に `{"5": "バリラ スパゲッティ 5キロ"}` のように順位ごとに書くと置き換わります。
+背景の写真は `videos/pasta.json` の `background` の場所に置きます（png・jpg どちらでも可）。無ければ無地の背景になります。
+`node video/make-background.mjs videos/pasta.json` を実行すると、`backgroundScene` の説明から Codex が作ります（2〜3分。動画の書き出しと同時に実行しないこと）。
+BGMは `video/bgm.json` の曲を小さく重ねます（音量は `volume`、0.12 が標準）。
+
+動画の「つかみ」と「ひとこと」は `videos/pasta.json` で書き換えます。「ひとこと」は自分の判断を書く場所なので、毎回自分の言葉にしてください（量産動画と判定されにくくなります）。
 
 1. `fetch` の結果に出る上位5件の **商品名と内容量が正しいか目で確認**します（読み違いは公開前に直す）
 2. `build` してページを確認します

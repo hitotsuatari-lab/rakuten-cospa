@@ -23,6 +23,14 @@ h1{font-size:22px;margin:16px 0 4px;font-weight:600}
 .bar div{height:100%;background:var(--bar)}
 .item.top .bar div{background:var(--accent)}
 .btn{display:inline-block;margin-top:8px;padding:8px 18px;background:var(--btn);color:var(--btn-text);border-radius:8px;text-decoration:none;font-size:14px;font-weight:600}
+.featured{display:block;margin:16px 0 8px;padding:18px;background:var(--card);border:2px solid var(--accent);border-radius:14px;color:var(--text);text-decoration:none}
+.featured span{display:block}
+.featured .badge{display:inline-block;font-size:12px;font-weight:600;color:var(--btn-text);background:var(--accent);padding:2px 10px;border-radius:999px}
+.featured .ft{font-size:20px;font-weight:700;margin-top:8px}
+.featured .fs{font-size:14px;margin-top:4px}
+.featured .fd{font-size:13px;color:var(--sub)}
+.featured .btn{display:inline-block}
+h2{font-size:16px;margin:24px 0 8px;color:var(--sub);font-weight:600}
 .topics{list-style:none;padding:0}
 .topics a{display:flex;justify-content:space-between;gap:12px;padding:14px;background:var(--card);border:1px solid var(--line);border-radius:12px;margin-bottom:10px;color:var(--text);text-decoration:none}
 .topics .d{color:var(--sub);font-size:13px;white-space:nowrap}
