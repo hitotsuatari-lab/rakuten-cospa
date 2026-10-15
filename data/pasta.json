@@ -1,0 +1,66 @@
+{
+  "slug": "pasta",
+  "title": "パスタ 1食あたりの値段比較",
+  "measure": "weight",
+  "perServing": 100,
+  "servingLabel": "1食（100g）",
+  "fetchedAt": "2026-10-15T13:58:20.859Z",
+  "sample": false,
+  "ranking": [
+    {
+      "name": "バリラ No.5 5kg 業務用 パスタ スパゲティ 約1.8mm Barilla※お1人様1袋限り",
+      "shop": "よろずやマルシェ",
+      "price": 1890,
+      "amount": 5000,
+      "servings": 50,
+      "perServing": 37.8,
+      "url": "https://hb.afl.rakuten.co.jp/hgc/ID  0918572c.7549f1cb.0918572d.4605a1f1/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Fonestep%2Fsh1802%2F&m=http%3A%2F%2Fm.rakuten.co.jp%2Fonestep%2Fi%2F10086609%2F&rafcid=wsc_i_is_44ab75ea-a1c3-45bf-963d-dda8a8c13c38",
+      "reviewCount": 313,
+      "reviewAverage": 4.8
+    },
+    {
+      "name": "【並行輸入品】パスタ 5kg 業務用 バリラ No.5 太さ 1.8mm 少し太め 食べ応え 大容量 約55食分 茹で時間 約9分 イタリア スパゲッティ スパゲティ ロングパスタ 乾麺 麺 5キロ まとめ買い 食品 パスタ麺 Barilla バリラパスタ *",
+      "shop": "暮らし健康ネット館",
+      "price": 2180,
+      "amount": 5000,
+      "servings": 50,
+      "perServing": 43.6,
+      "url": "https://hb.afl.rakuten.co.jp/hgc/ID  0918572c.7549f1cb.0918572d.4605a1f1/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Fkurashikenkou%2F9430302%2F&m=http%3A%2F%2Fm.rakuten.co.jp%2Fkurashikenkou%2Fi%2F10018427%2F&rafcid=wsc_i_is_44ab75ea-a1c3-45bf-963d-dda8a8c13c38",
+      "reviewCount": 189,
+      "reviewAverage": 4.43
+    },
+    {
+      "name": "【期間限定! 10/19まで15%OFF】【選べる個数】 ローマン スパゲッチ 2.2mm 4kg 業務用 パスタ / 国産 もちもち 太麺 ナポリタン あんかけスパ あんかけパスタ 大容量 大量 まとめ買い 2.2 スパゲッティ スパゲティ スパゲッティー スパゲティー ローマンスパゲッチ 乾麺 太麺",
+      "shop": "【公式】 ボルカノ・スパゲッチ",
+      "price": 2164,
+      "amount": 4000,
+      "servings": 40,
+      "perServing": 54.1,
+      "url": "https://hb.afl.rakuten.co.jp/hgc/ID  0918572c.7549f1cb.0918572d.4605a1f1/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Fnichimaclub%2F10000298%2F&m=http%3A%2F%2Fm.rakuten.co.jp%2Fnichimaclub%2Fi%2F10000298%2F&rafcid=wsc_i_is_44ab75ea-a1c3-45bf-963d-dda8a8c13c38",
+      "reviewCount": 413,
+      "reviewAverage": 4.84
+    },
+    {
+      "name": "【期間限定! 10/19まで15%OFF】【選べる個数】 早ゆで ローマン スパゲッチ 1.8mm 3kg 業務用 パスタ / 国産 もちもち ナポリタン あんかけスパ あんかけパスタ 大容量 大量 まとめ買い 1.8 スパゲッティ スパゲティ スパゲッティー スパゲティー ローマンスパゲッチ 乾麺",
+      "shop": "【公式】 ボルカノ・スパゲッチ",
+      "price": 1723,
+      "amount": 3000,
+      "servings": 30,
+      "perServing": 57.4,
+      "url": "https://hb.afl.rakuten.co.jp/hgc/ID  0918572c.7549f1cb.0918572d.4605a1f1/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Fnichimaclub%2F10000567%2F&m=http%3A%2F%2Fm.rakuten.co.jp%2Fnichimaclub%2Fi%2F10000567%2F&rafcid=wsc_i_is_44ab75ea-a1c3-45bf-963d-dda8a8c13c38",
+      "reviewCount": 242,
+      "reviewAverage": 4.81
+    },
+    {
+      "name": "バリラ スパゲッティ No.5（1.79mm）【5kg】【常温/全温度帯可】 業務用 バリラ スパゲティーニ パスタ",
+      "shop": "ハイ食材室",
+      "price": 2980,
+      "amount": 5000,
+      "servings": 50,
+      "perServing": 59.6,
+      "url": "https://hb.afl.rakuten.co.jp/hgc/ID  0918572c.7549f1cb.0918572d.4605a1f1/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Fhi-syokuzaishitu%2F30300336%2F&m=http%3A%2F%2Fm.rakuten.co.jp%2Fhi-syokuzaishitu%2Fi%2F10000567%2F&rafcid=wsc_i_is_44ab75ea-a1c3-45bf-963d-dda8a8c13c38",
+      "reviewCount": 349,
+      "reviewAverage": 4.71
+    }
+  ]
+}

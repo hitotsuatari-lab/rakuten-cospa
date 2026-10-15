@@ -1,0 +1,29 @@
+:root{--bg:#f4faf7;--card:#fff;--text:#04342c;--sub:#3d6b60;--line:#cfe8de;--accent:#0f6e56;--bar:#5dcaa5;--btn:#0f6e56;--btn-text:#fff}
+@media (prefers-color-scheme:dark){:root{--bg:#0d1a17;--card:#14241f;--text:#e1f5ee;--sub:#9fc9bb;--line:#24443a;--accent:#5dcaa5;--bar:#1d9e75;--btn:#5dcaa5;--btn-text:#04342c}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Hiragino Sans","Yu Gothic UI",sans-serif;line-height:1.7}
+main{max-width:640px;margin:0 auto;padding:8px 16px 32px}
+.pr{margin:0;padding:6px 16px;font-size:12px;color:var(--sub);background:var(--card);border-bottom:1px solid var(--line);text-align:center}
+h1{font-size:22px;margin:16px 0 4px;font-weight:600}
+.lead,.date,.note{color:var(--sub);font-size:14px}
+.sample{background:#faeeda;color:#633806;padding:8px 12px;border-radius:8px;font-size:14px}
+.back{color:var(--accent);font-size:14px;text-decoration:none}
+.ranking{list-style:none;padding:0;margin:16px 0}
+.item{display:flex;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:12px}
+.item.top{border:2px solid var(--accent)}
+.rank{font-size:26px;font-weight:700;color:var(--accent);min-width:44px;line-height:1.2}
+.rank span{font-size:13px}
+.body{flex:1;min-width:0}
+.name{margin:0;font-size:15px;font-weight:600;overflow-wrap:anywhere}
+.meta,.review{margin:2px 0;font-size:13px;color:var(--sub)}
+.per{margin-top:6px;font-size:14px}
+.per strong{font-size:24px}
+.per span{color:var(--sub)}
+.bar{height:8px;background:var(--line);border-radius:4px;margin:4px 0 6px;overflow:hidden}
+.bar div{height:100%;background:var(--bar)}
+.item.top .bar div{background:var(--accent)}
+.btn{display:inline-block;margin-top:8px;padding:8px 18px;background:var(--btn);color:var(--btn-text);border-radius:8px;text-decoration:none;font-size:14px;font-weight:600}
+.topics{list-style:none;padding:0}
+.topics a{display:flex;justify-content:space-between;gap:12px;padding:14px;background:var(--card);border:1px solid var(--line);border-radius:12px;margin-bottom:10px;color:var(--text);text-decoration:none}
+.topics .d{color:var(--sub);font-size:13px;white-space:nowrap}
+footer{text-align:center;color:var(--sub);font-size:12px;padding:24px 0}

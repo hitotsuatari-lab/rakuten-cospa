@@ -1,0 +1,13 @@
+{
+  "slug": "pasta",
+  "title": "パスタ 1食あたりの値段比較",
+  "keyword": "パスタ 業務用",
+  "measure": "weight",
+  "perServing": 100,
+  "servingLabel": "1食（100g）",
+  "exclude": ["ソース", "ふるさと納税", "訳あり 詰め合わせ"],
+  "sort": "-reviewCount",
+  "hits": 30,
+  "pages": 2,
+  "top": 5
+}

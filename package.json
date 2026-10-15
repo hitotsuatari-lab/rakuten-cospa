@@ -1,0 +1,10 @@
+{
+  "name": "rakuten-cospa",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "fetch": "node src/fetch.mjs",
+    "build": "node src/build.mjs",
+    "test": "node src/amount.test.mjs"
+  }
+}
