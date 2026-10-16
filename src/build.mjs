@@ -5,6 +5,7 @@ import { readFile, writeFile, mkdir, readdir } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { formatAmount } from './amount.mjs';
+import { outDir } from './outdir.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const DOCS = path.join(ROOT, 'docs');
@@ -31,11 +32,11 @@ await writeFile(path.join(DOCS, 'style.css'), css());
 await writeFile(path.join(DOCS, 'index.html'), indexHtml(pages));
 for (const p of pages) {
   await writeFile(path.join(DOCS, `${p.slug}.html`), topicHtml(p));
-  // 動画と同じテーマごとのフォルダ（out/<slug>/）に入れる
-  await mkdir(path.join(OUT, p.slug), { recursive: true });
-  await writeFile(path.join(OUT, p.slug, '概要欄.txt'), description(p));
+  // 動画と同じ日付とテーマのフォルダ（out/20261016_rice/ など）に入れる
+  await mkdir(outDir(p), { recursive: true });
+  await writeFile(path.join(outDir(p), '概要欄.txt'), description(p));
 }
-console.log(`${pages.length} ページを docs/ に、概要欄テキストを out/<テーマ>/ に作りました`);
+console.log(`${pages.length} ページを docs/ に、概要欄テキストを out/<取得日>_<テーマ>/ に作りました`);
 
 function topicHtml(p) {
   const max = Math.max(...p.ranking.map((r) => r.perServing));
