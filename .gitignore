@@ -1,0 +1,5 @@
+# IDやキーが入っているので絶対に公開しない
+config.json
+node_modules/
+out/
+video/.codex-work/

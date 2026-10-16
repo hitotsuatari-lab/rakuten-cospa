@@ -13,7 +13,14 @@ const OUT = path.join(ROOT, 'out');
 const config = await loadSiteConfig();
 const pages = [];
 for (const file of (await readdir(path.join(ROOT, 'data'))).filter((f) => f.endsWith('.json'))) {
-  pages.push(JSON.parse(await readFile(path.join(ROOT, 'data', file), 'utf8')));
+  const page = JSON.parse(await readFile(path.join(ROOT, 'data', file), 'utf8'));
+  // 動画（videos/<slug>.json）で表示名を指定していれば、概要欄と一覧でも同じ名前を使う
+  try {
+    page.labels = JSON.parse(await readFile(path.join(ROOT, 'videos', file), 'utf8')).labels ?? {};
+  } catch {
+    page.labels = {};
+  }
+  pages.push(page);
 }
 pages.sort((a, b) => b.fetchedAt.localeCompare(a.fetchedAt));
 
@@ -68,7 +75,7 @@ function indexHtml(list) {
   <a class="featured" href="${esc(latest.slug)}.html">
     <span class="badge">最新の比較</span>
     <span class="ft">${esc(latest.title)}</span>
-    ${top ? `<span class="fs">1位 ${esc(shortName(top.name, 24))}　${esc(latest.servingLabel)} ${top.perServing.toFixed(1)}円</span>` : ''}
+    ${top ? `<span class="fs">1位 ${esc(latest.labels[1] ?? shortName(top.name, 24))}　${esc(latest.servingLabel)} ${top.perServing.toFixed(1)}円</span>` : ''}
     <span class="fd">${formatDate(latest.fetchedAt)} 時点${latest.sample ? '・サンプル' : ''}</span>
     <span class="btn">ランキングを見る</span>
   </a>`
@@ -111,7 +118,7 @@ function layout(title, main) {
 
 function description(p) {
   const lines = p.ranking.map(
-    (r, i) => `${i + 1}位 ${shortName(r.name, 28)}　${p.servingLabel} ${r.perServing.toFixed(1)}円`,
+    (r, i) => `${i + 1}位 ${p.labels[i + 1] ?? shortName(r.name, 28)}　${p.servingLabel} ${r.perServing.toFixed(1)}円`,
   );
   return `【${p.title}】※PR
 比較した商品の一覧はプロフィールのリンクから

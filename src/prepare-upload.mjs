@@ -1,34 +1,45 @@
-// GitHubのWeb画面にドラッグするための「公開してよいファイルだけ」のフォルダを作る。
-// ブラウザからのアップロードは .gitignore を無視するので、config.json が混ざらないようにここで選り分ける。
-// 使い方: node src/prepare-upload.mjs → ../upload-github/ ができる
+// GitHubに送る「公開してよいファイルだけ」のフォルダ（../upload-github/）を作り直す。
+// upload-github は GitHub のリポジトリとつながっている（.git がある）ので、.git だけは残して中身を入れ替える。
+// config.json が混ざらないように、送るものは INCLUDE に書いたものだけ。
+// 使い方: node src/prepare-upload.mjs（ふだんは publish.mjs から呼ばれる）
 
 import { cp, rm, readFile, readdir } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const DEST = path.resolve(ROOT, '..', 'upload-github');
+export const DEST = path.resolve(ROOT, '..', 'upload-github');
 const INCLUDE = ['docs', 'src', 'data', 'topics', 'README.md', 'package.json', 'config.example.json', '.gitignore'];
 
-await rm(DEST, { recursive: true, force: true });
-for (const name of INCLUDE) {
-  await cp(path.join(ROOT, name), path.join(DEST, name), { recursive: true });
-}
+export async function prepareUpload() {
+  await clearExceptGit();
+  for (const name of INCLUDE) {
+    await cp(path.join(ROOT, name), path.join(DEST, name), { recursive: true });
+  }
 
-// 念のため、アクセスキーがどこにも入っていないことを確かめる
-// （アプリIDは楽天が返すアフィリエイトリンクの rafcid に最初から含まれる公開前提の値なので対象外）
-const secrets = await readSecrets();
-for (const file of await listFiles(DEST)) {
-  const text = await readFile(file, 'utf8');
-  if (secrets.some((s) => text.includes(s))) {
-    await rm(DEST, { recursive: true, force: true });
-    console.error(`秘密の値が含まれていたため中止しました: ${path.relative(DEST, file)}`);
-    process.exit(1);
+  // 念のため、アクセスキーがどこにも入っていないことを確かめる
+  // （アプリIDは楽天が返すアフィリエイトリンクの rafcid に最初から含まれる公開前提の値なので対象外）
+  const secrets = await readSecrets();
+  for (const file of await listFiles(DEST)) {
+    const text = await readFile(file, 'utf8');
+    if (secrets.some((s) => text.includes(s))) {
+      await clearExceptGit();
+      throw new Error(`秘密の値が含まれていたため中止しました: ${path.relative(DEST, file)}`);
+    }
   }
 }
 
-console.log(`アップロード用フォルダを作りました: ${DEST}`);
-console.log('この中身をすべて選んで、GitHubの「Upload files」画面にドラッグしてください。');
+async function clearExceptGit() {
+  let entries = [];
+  try {
+    entries = await readdir(DEST);
+  } catch {
+    return;
+  }
+  for (const name of entries) {
+    if (name !== '.git') await rm(path.join(DEST, name), { recursive: true, force: true });
+  }
+}
 
 async function readSecrets() {
   try {
@@ -42,9 +53,21 @@ async function readSecrets() {
 async function listFiles(dir) {
   const out = [];
   for (const entry of await readdir(dir, { withFileTypes: true })) {
+    if (entry.name === '.git') continue;
     const p = path.join(dir, entry.name);
     if (entry.isDirectory()) out.push(...(await listFiles(p)));
     else out.push(p);
   }
   return out;
+}
+
+// 直接実行されたとき
+if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+  try {
+    await prepareUpload();
+    console.log(`公開用フォルダを作り直しました: ${DEST}`);
+  } catch (e) {
+    console.error(e.message);
+    process.exit(1);
+  }
 }

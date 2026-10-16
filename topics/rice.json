@@ -1,0 +1,14 @@
+{
+  "slug": "rice",
+  "name": "お米",
+  "title": "お米 茶碗1杯あたりの値段比較",
+  "keyword": "米 10kg",
+  "measure": "weight",
+  "perServing": 68,
+  "servingLabel": "茶碗1杯",
+  "exclude": ["ふるさと納税", "定期便", "頒布会", "玄米", "もち米", "米粉", "パックご飯", "レトルト"],
+  "sort": "-reviewCount",
+  "hits": 30,
+  "pages": 2,
+  "top": 5
+}

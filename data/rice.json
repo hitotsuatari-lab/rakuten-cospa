@@ -1,0 +1,67 @@
+{
+  "slug": "rice",
+  "title": "お米 茶碗1杯あたりの値段比較",
+  "name": "お米",
+  "measure": "weight",
+  "perServing": 68,
+  "servingLabel": "茶碗1杯",
+  "fetchedAt": "2026-10-16T01:25:28.130Z",
+  "sample": false,
+  "ranking": [
+    {
+      "name": "楽天ランキング受賞 お米 10kg 送料無料 家計応援まんぷく米 5kg×2袋 安い 米 10キロ コメ 白米",
+      "shop": "阿部ベイコク",
+      "price": 3580,
+      "amount": 10000,
+      "servings": 147.1,
+      "perServing": 24.3,
+      "url": "https://hb.afl.rakuten.co.jp/hgc/g00q08h2.iujak2a3.g00q08h2.iujal708/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Fokomeabe%2F10000076%2F&m=http%3A%2F%2Fm.rakuten.co.jp%2Fokomeabe%2Fi%2F10000076%2F&rafcid=wsc_i_is_44ab75ea-a1c3-45bf-963d-dda8a8c13c38",
+      "reviewCount": 14013,
+      "reviewAverage": 4.28
+    },
+    {
+      "name": "セール【10/22～順次発送】10kg お米 白米 安い 訳あり ブレンド米 送料無料 『国内産たんぼだより白米10kg』",
+      "shop": "まんま屋",
+      "price": 3580,
+      "amount": 10000,
+      "servings": 147.1,
+      "perServing": 24.3,
+      "url": "https://hb.afl.rakuten.co.jp/hgc/g00qeme2.iujak50b.g00qeme2.iujal64c/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Fanzai-rice%2Ftanbo10%2F&m=http%3A%2F%2Fm.rakuten.co.jp%2Fanzai-rice%2Fi%2F10000437%2F&rafcid=wsc_i_is_44ab75ea-a1c3-45bf-963d-dda8a8c13c38",
+      "reviewCount": 5219,
+      "reviewAverage": 4.37
+    },
+    {
+      "name": "送料無料 ブレンド米 10kg 国内産複数原料米 白米",
+      "shop": "有限会社 佐藤米穀商店楽天市場店",
+      "price": 3580,
+      "amount": 10000,
+      "servings": 147.1,
+      "perServing": 24.3,
+      "url": "https://hb.afl.rakuten.co.jp/hgc/g00ryp32.iujakd30.g00ryp32.iujalb68/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Frs-takeo%2F10000019%2F&m=http%3A%2F%2Fm.rakuten.co.jp%2Frs-takeo%2Fi%2F10000019%2F&rafcid=wsc_i_is_44ab75ea-a1c3-45bf-963d-dda8a8c13c38",
+      "reviewCount": 4278,
+      "reviewAverage": 4.07
+    },
+    {
+      "name": "新米入りブレンド米 10kg(5kg×2袋) 国産 白米 送料無料 安い ブレンド米 たべよまい 訳あり うまい米ショップ",
+      "shop": "うまい米ショップ",
+      "price": 3650,
+      "amount": 10000,
+      "servings": 147.1,
+      "perServing": 24.8,
+      "url": "https://hb.afl.rakuten.co.jp/hgc/g00skgr2.iujak235.g00skgr2.iujal036/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Fauc-ohnoshokuryou-shop%2Fbrend-10%2F&m=http%3A%2F%2Fm.rakuten.co.jp%2Fauc-ohnoshokuryou-shop%2Fi%2F10000001%2F&rafcid=wsc_i_is_44ab75ea-a1c3-45bf-963d-dda8a8c13c38",
+      "reviewCount": 5004,
+      "reviewAverage": 4.56
+    },
+    {
+      "name": "【送料無料】山形とくとく米10kg【四国・九州への配送は+400円/沖縄・離島への配送は+1,000円加算】",
+      "shop": "山形のお米とさくらんぼの矢萩商店",
+      "price": 3880,
+      "amount": 10000,
+      "servings": 147.1,
+      "perServing": 26.4,
+      "url": "https://hb.afl.rakuten.co.jp/hgc/g00qcg02.iujak552.g00qcg02.iujal401/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Fyahagishouten%2Fblend002%2F&m=http%3A%2F%2Fm.rakuten.co.jp%2Fyahagishouten%2Fi%2F10000000%2F&rafcid=wsc_i_is_44ab75ea-a1c3-45bf-963d-dda8a8c13c38",
+      "reviewCount": 2787,
+      "reviewAverage": 4.62
+    }
+  ]
+}
