@@ -13,8 +13,8 @@ topics/pasta.json  ─(fetch)→  data/pasta.json  ─(build)→  docs/pasta.htm
 node src/fetch.mjs topics/pasta.json   楽天から取得して data/ に保存
 node src/build.mjs                     docs/ と out/ を作り直す
 node src/serve.mjs                     http://localhost:8080/ で公開前に確認
-node src/prepare-upload.mjs            公開してよいファイルだけを ../upload-github/ に集める
-node video/render.mjs videos/pasta.json  読み上げ付きの縦型ショートを out/pasta-short.mp4 に書き出す（約3分）
+node src/publish.mjs                   build してから、公開してよいファイルだけを GitHub に送る（1〜2分で公開ページに反映）
+node video/render.mjs videos/pasta.json  読み上げ付きの縦型ショートを out/pasta-short.mp4 に書き出す（約2分半）
 ```
 
 動画を作る前に **VOICEVOX のアプリを起動**しておきます（声は青山龍星。`video/voice.json` で変更）。
@@ -27,7 +27,9 @@ BGMは `video/bgm.json` の曲を小さく重ねます（音量は `volume`、0.
 
 1. `fetch` の結果に出る上位5件の **商品名と内容量が正しいか目で確認**します（読み違いは公開前に直す）
 2. `build` してページを確認します
-3. `prepare-upload` でできた `upload-github` フォルダの中身を、GitHubの「Add file → Upload files」にドラッグすると、数分で公開ページに反映されます
+3. `publish` で GitHub に送ると、1〜2分で公開ページに反映されます
+   - 送るのは `../upload-github/`（GitHub とつながったフォルダ）に集めた公開用ファイルだけで、config.json は入りません
+   - GitHub のログイン情報は Windows の資格情報マネージャーが覚えています。ログインし直しを求められたら、ターミナルで `upload-github` フォルダに移って `git push origin HEAD` を実行し、ブラウザでログインします
 
 新しい比較を増やすときは、`topics/pasta.json` をコピーして `slug`（ファイル名になる英字）、`title`、`keyword`、`perServing`（1食・1回分の量）を書き換えます。
 液体（水・洗剤など）は `"measure": "volume"`、`perServing` は ml で指定します。
