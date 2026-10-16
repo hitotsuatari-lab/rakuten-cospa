@@ -31,9 +31,11 @@ await writeFile(path.join(DOCS, 'style.css'), css());
 await writeFile(path.join(DOCS, 'index.html'), indexHtml(pages));
 for (const p of pages) {
   await writeFile(path.join(DOCS, `${p.slug}.html`), topicHtml(p));
-  await writeFile(path.join(OUT, `${p.slug}-概要欄.txt`), description(p));
+  // 動画と同じテーマごとのフォルダ（out/<slug>/）に入れる
+  await mkdir(path.join(OUT, p.slug), { recursive: true });
+  await writeFile(path.join(OUT, p.slug, '概要欄.txt'), description(p));
 }
-console.log(`${pages.length} ページを docs/ に、概要欄テキストを out/ に作りました`);
+console.log(`${pages.length} ページを docs/ に、概要欄テキストを out/<テーマ>/ に作りました`);
 
 function topicHtml(p) {
   const max = Math.max(...p.ranking.map((r) => r.perServing));

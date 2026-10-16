@@ -4,7 +4,7 @@
 
 ```
 topics/pasta.json  ─(fetch)→  data/pasta.json  ─(build)→  docs/pasta.html（公開ページ）
-  何を比べるか          楽天APIの結果                    out/pasta-概要欄.txt
+  何を比べるか          楽天APIの結果                    out/pasta/概要欄.txt
 ```
 
 ## 毎回の使い方
@@ -14,8 +14,10 @@ node src/fetch.mjs topics/pasta.json   楽天から取得して data/ に保存
 node src/build.mjs                     docs/ と out/ を作り直す
 node src/serve.mjs                     http://localhost:8080/ で公開前に確認
 node src/publish.mjs                   build してから、公開してよいファイルだけを GitHub に送る（1〜2分で公開ページに反映）
-node video/render.mjs videos/pasta.json  読み上げ付きの縦型ショートを out/pasta-short.mp4 に書き出す（約2分半）
+node video/render.mjs videos/pasta.json  読み上げ付きの縦型ショートを out/pasta/ショート動画.mp4 に書き出す（約2分半）
 ```
+
+YouTubeに投稿するものは、テーマごとのフォルダ `out/<テーマ>/` にまとまります（`ショート動画.mp4` と `概要欄.txt`）。
 
 動画を作る前に **VOICEVOX のアプリを起動**しておきます（声は青山龍星。`video/voice.json` で変更）。
 読み上げの品名がおかしいときは、`videos/pasta.json` の `speakNames` に `{"5": "バリラ スパゲッティ 5キロ"}` のように順位ごとに書くと置き換わります。
