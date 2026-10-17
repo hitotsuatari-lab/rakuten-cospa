@@ -21,8 +21,8 @@ YouTubeに投稿するものは、データを取った日付とテーマのフ�
 
 動画を作る前に **VOICEVOX のアプリを起動**しておきます（声は青山龍星。`video/voice.json` で変更）。
 読み上げの品名がおかしいときは、`videos/pasta.json` の `speakNames` に `{"5": "バリラ スパゲッティ 5キロ"}` のように順位ごとに書くと置き換わります。
-背景の写真は `videos/pasta.json` の `background` の場所に置きます（png・jpg どちらでも可）。無ければ無地の背景になります。
-`node video/make-background.mjs videos/pasta.json` を実行すると、`backgroundScene` の説明から Codex が作ります（2〜3分。動画の書き出しと同時に実行しないこと）。
+背景の写真は **Gemini で作り**、`videos/pasta.json` の `background` の場所（`videos/images/<テーマ>.jpg`、png も可）に置きます。無ければ無地の背景になります。
+（`node video/make-background.mjs` で Codex に作らせることもできますが、2026年10月17日からは使わない決まりです）
 BGMは `video/bgm.json` の曲を小さく重ねます（音量は `volume`、0.12 が標準）。
 
 動画の「つかみ」と「ひとこと」は `videos/pasta.json` で書き換えます。「ひとこと」は自分の判断を書く場所なので、毎回自分の言葉にしてください（量産動画と判定されにくくなります）。
