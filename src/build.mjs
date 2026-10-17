@@ -39,6 +39,8 @@ for (const p of pages) {
   // 動画と同じ日付とテーマのフォルダ（out/20261016_rice/ など）に入れる
   await mkdir(outDir(p), { recursive: true });
   await writeFile(path.join(outDir(p), '概要欄.txt'), description(p));
+  await mkdir(path.join(outDir(p), 'インスタ'), { recursive: true });
+  await writeFile(path.join(outDir(p), 'インスタ', 'キャプション.txt'), instaCaption(p));
 }
 console.log(`${pages.length} ページを docs/ に、概要欄テキストを out/<取得日>_<テーマ>/ に作りました`);
 
@@ -190,6 +192,30 @@ ${lines.join('\n')}
 ※動画の一部はAIツールを使って作成しています。
 ${config.voiceCredit ? `音声: ${config.voiceCredit}\n` : ''}
 #楽天 #コスパ #節約 #${config.siteName}
+`;
+}
+
+// インスタのリール用。リンクは押せないので「プロフのリンク」へ案内する。
+// ハッシュタグは少なめ（多すぎると表示されにくい／上限がある）。PR表記は1行目に置く
+function instaCaption(p) {
+  const name = p.name ?? p.title.split(/[ 　]/)[0];
+  const lines = p.ranking.map(
+    (r, i) => `${i + 1}位 ${p.labels[i + 1] ?? shortName(r.name, 24)}　${formatYen(r.perServing)}円`,
+  );
+  return `#PR 楽天アフィリエイトを利用しています
+
+楽天で売れてる${name}、${p.servingLabel}あたり最安はどれ？
+
+${lines.join('\n')}
+（${p.servingLabel}あたりの値段）
+
+比較した商品の一覧は、プロフィールのリンクから
+→ 一覧の「${name}」のページへ
+
+※価格は${formatDate(p.fetchedAt)}時点です。最新の価格は楽天の商品ページで確認してください。
+※動画の一部はAIツールを使って作成しています。
+${config.voiceCredit ? `音声: ${config.voiceCredit}\n` : ''}
+#楽天 #コスパ #節約 #${name} #${config.siteName}
 `;
 }
 
