@@ -1,0 +1,14 @@
+{
+  "slug": "ikura",
+  "name": "いくら",
+  "title": "いくら醤油漬け 100gあたりの値段比較",
+  "keyword": "いくら 醤油漬け 500g",
+  "measure": "weight",
+  "perServing": 100,
+  "servingLabel": "100g",
+  "exclude": ["ふるさと納税", "定期便", "明太子", "めんたい", "たらこ", "セット", "数の子", "かに", "カニ"],
+  "sort": "-reviewCount",
+  "hits": 30,
+  "pages": 2,
+  "top": 5
+}

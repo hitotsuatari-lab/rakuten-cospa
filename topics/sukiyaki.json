@@ -1,0 +1,14 @@
+{
+  "slug": "sukiyaki",
+  "name": "すき焼き肉",
+  "title": "すき焼き用 牛肉 100gあたりの値段比較",
+  "keyword": "すき焼き 肉 訳あり",
+  "measure": "weight",
+  "perServing": 100,
+  "servingLabel": "100g",
+  "exclude": ["ふるさと納税", "定期便", "福袋", "豚", "ハンバーグ", "割下", "たれ", "タレ"],
+  "sort": "-reviewCount",
+  "hits": 30,
+  "pages": 2,
+  "top": 5
+}

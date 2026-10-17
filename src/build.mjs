@@ -6,7 +6,7 @@ import { spawnSync } from 'node:child_process';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import ffmpegPath from 'ffmpeg-static';
-import { formatAmount } from './amount.mjs';
+import { formatAmount, formatYen } from './amount.mjs';
 import { outDir } from './outdir.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -52,7 +52,7 @@ function topicHtml(p) {
       <div class="body">
         <p class="name">${esc(shortName(r.name, 60))}</p>
         <p class="meta">${esc(r.shop)}｜${r.price.toLocaleString('ja-JP')}円 / ${formatAmount(r.amount, p.measure)}（${r.servings}食分）</p>
-        <div class="per"><strong>${r.perServing.toFixed(1)}</strong>円 <span>/ ${esc(p.servingLabel)}</span></div>
+        <div class="per"><strong>${formatYen(r.perServing)}</strong>円 <span>/ ${esc(p.servingLabel)}</span></div>
         <div class="bar"><div style="width:${Math.round((r.perServing / max) * 100)}%"></div></div>
         ${r.reviewCount ? `<p class="review">レビュー ★${r.reviewAverage}（${r.reviewCount.toLocaleString('ja-JP')}件）</p>` : ''}
         <a class="btn" href="${esc(r.url)}" target="_blank" rel="sponsored noopener">楽天で見る</a>
@@ -85,7 +85,7 @@ function indexHtml(list) {
     <li><a href="${esc(p.slug)}.html">
       <div class="thumb">${thumb}${i === 0 ? '<span class="new">最新</span>' : ''}</div>
       <p class="st">${esc(p.title)}</p>
-      <p class="sm">${top ? `1位 ${esc(p.labels[1] ?? shortName(top.name, 18))} ${top.perServing.toFixed(1)}円・` : ''}${formatDate(p.fetchedAt)}${p.sample ? '・サンプル' : ''}</p>
+      <p class="sm">${top ? `1位 ${esc(p.labels[1] ?? shortName(top.name, 18))} ${formatYen(top.perServing)}円・` : ''}${formatDate(p.fetchedAt)}${p.sample ? '・サンプル' : ''}</p>
     </a></li>`;
     })
     .join('');
@@ -177,7 +177,7 @@ function layout(title, main, mainClass = '') {
 
 function description(p) {
   const lines = p.ranking.map(
-    (r, i) => `${i + 1}位 ${p.labels[i + 1] ?? shortName(r.name, 28)}　${p.servingLabel} ${r.perServing.toFixed(1)}円`,
+    (r, i) => `${i + 1}位 ${p.labels[i + 1] ?? shortName(r.name, 28)}　${p.servingLabel} ${formatYen(r.perServing)}円`,
   );
   return `【${p.title}】※PR
 比較した商品の一覧はプロフィールのリンクから

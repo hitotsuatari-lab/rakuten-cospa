@@ -34,3 +34,8 @@ export function formatAmount(amount, measure = 'weight') {
     ? `${amount / 1000}${big}`
     : `${amount.toLocaleString('ja-JP')}${small}`;
 }
+
+// 値段の表示：割り切れるときは「.0」を付けず、千の位に区切りを入れる（288 / 37.8 / 1,396）
+export function formatYen(x) {
+  return x.toLocaleString('ja-JP', { maximumFractionDigits: 1 });
+}

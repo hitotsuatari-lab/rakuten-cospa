@@ -1,0 +1,67 @@
+{
+  "slug": "mochi",
+  "title": "切り餅 1個あたりの値段比較",
+  "name": "切り餅",
+  "measure": "weight",
+  "perServing": 50,
+  "servingLabel": "1個（50g）",
+  "fetchedAt": "2026-10-17T03:06:42.515Z",
+  "sample": false,
+  "ranking": [
+    {
+      "name": "越後製菓 越後製菓　生一番切り餅 1kg",
+      "shop": "マツモトキヨシ楽天市場店",
+      "price": 1078,
+      "amount": 1000,
+      "servings": 20,
+      "perServing": 53.9,
+      "url": "https://hb.afl.rakuten.co.jp/hgc/g00rqsz2.iujak9df.g00rqsz2.iujalbc5/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Fmatsukiyo%2F4901075022569%2F&m=http%3A%2F%2Fm.rakuten.co.jp%2Fmatsukiyo%2Fi%2F10533514%2F&rafcid=wsc_i_is_44ab75ea-a1c3-45bf-963d-dda8a8c13c38",
+      "reviewCount": 27,
+      "reviewAverage": 4.85
+    },
+    {
+      "name": "餅 もち 切り餅 2kg 業務用 個包装 保存 国産 もち米 角餅 生切り餅 切餅 きりもち おやつ お正月 年末 年始 お雑煮 元旦 お餅 おもち 非常食 備蓄 お菓子 mochi モチ アイリスオーヤマ アイリスフーズ 生きりもち 国内産水稲もち米100%使用 * 初売",
+      "shop": "まんぷくマーケット",
+      "price": 2180,
+      "amount": 2000,
+      "servings": 40,
+      "perServing": 54.5,
+      "url": "https://hb.afl.rakuten.co.jp/hgc/g00rxop2.iujak679.g00rxop2.iujal0dc/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Fkomeking%2F1310130%2F&m=http%3A%2F%2Fm.rakuten.co.jp%2Fkomeking%2Fi%2F10002006%2F&rafcid=wsc_i_is_44ab75ea-a1c3-45bf-963d-dda8a8c13c38",
+      "reviewCount": 28,
+      "reviewAverage": 4.71
+    },
+    {
+      "name": "餅 もち 切り餅 2kg (1kg×2個) セット 業務用 まとめ買い 個包装 保存 国産 もち米 生切り餅 切餅 生きりもち おやつ お正月 年末 年始 非常食 備蓄 お菓子 mochi モチ アイリスオーヤマ アイリスフーズ 純にほん 国内産水稲もち米使用 *",
+      "shop": "メガストア",
+      "price": 2280,
+      "amount": 2000,
+      "servings": 40,
+      "perServing": 57,
+      "url": "https://hb.afl.rakuten.co.jp/hgc/g00rxoq2.iujak564.g00rxoq2.iujal44f/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Fenetkome%2F1894649%2F&m=http%3A%2F%2Fm.rakuten.co.jp%2Fenetkome%2Fi%2F10000941%2F&rafcid=wsc_i_is_44ab75ea-a1c3-45bf-963d-dda8a8c13c38",
+      "reviewCount": 431,
+      "reviewAverage": 4.64
+    },
+    {
+      "name": "【2個セット】純にほん 国内産水稲もち米使用（シングルパック） 2kg（1kg×2）餅 個包装 切餅 切り餅 きりもち モチ 正月 新年",
+      "shop": "まんぷくマーケット",
+      "price": 2280,
+      "amount": 2000,
+      "servings": 40,
+      "perServing": 57,
+      "url": "https://hb.afl.rakuten.co.jp/hgc/g00rxop2.iujak679.g00rxop2.iujal0dc/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Fkomeking%2F1894649%2F&m=http%3A%2F%2Fm.rakuten.co.jp%2Fkomeking%2Fi%2F10001212%2F&rafcid=wsc_i_is_44ab75ea-a1c3-45bf-963d-dda8a8c13c38",
+      "reviewCount": 74,
+      "reviewAverage": 4.85
+    },
+    {
+      "name": "サトウの切り餅 800g",
+      "shop": "マツモトキヨシ楽天市場店",
+      "price": 950,
+      "amount": 800,
+      "servings": 16,
+      "perServing": 59.4,
+      "url": "https://hb.afl.rakuten.co.jp/hgc/g00rqsz2.iujak9df.g00rqsz2.iujalbc5/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Fmatsukiyo%2F4973360300799%2F&m=http%3A%2F%2Fm.rakuten.co.jp%2Fmatsukiyo%2Fi%2F10497751%2F&rafcid=wsc_i_is_44ab75ea-a1c3-45bf-963d-dda8a8c13c38",
+      "reviewCount": 21,
+      "reviewAverage": 4.9
+    }
+  ]
+}

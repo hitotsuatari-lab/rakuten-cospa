@@ -1,0 +1,14 @@
+{
+  "slug": "mikan",
+  "name": "みかん",
+  "title": "みかん 1kgあたりの値段比較",
+  "keyword": "みかん 訳あり",
+  "measure": "weight",
+  "perServing": 1000,
+  "servingLabel": "1kg",
+  "exclude": ["ふるさと納税", "定期便", "ジュース", "苗", "ゼリー", "缶詰", "ドライ"],
+  "sort": "-reviewCount",
+  "hits": 30,
+  "pages": 2,
+  "top": 5
+}
