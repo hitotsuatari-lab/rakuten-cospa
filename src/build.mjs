@@ -158,6 +158,15 @@ async function exists(p) {
   }
 }
 
+// site.json の gaId（Googleアナリティクスの測定ID「G-」で始まる）があれば、全ページに計測タグを入れる。
+// 「楽天で見る」のクリックは、アナリティクスの拡張計測（外部リンクのクリック）で自動で数えられる
+function analyticsTag() {
+  if (!site.gaId || !/^G-[A-Z0-9]+$/.test(site.gaId)) return '';
+  return `
+<script async src="https://www.googletagmanager.com/gtag/js?id=${site.gaId}"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${site.gaId}');</script>`;
+}
+
 function layout(title, main, mainClass = '') {
   return `<!doctype html>
 <html lang="ja">
@@ -165,13 +174,13 @@ function layout(title, main, mainClass = '') {
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${esc(title)}</title>
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="style.css">${analyticsTag()}
 </head>
 <body>
 <p class="pr">PR｜このページは楽天アフィリエイトを利用しています</p>
 <main${mainClass ? ` class="${mainClass}"` : ''}>${main}
 </main>
-<footer>${esc(config.siteName)}</footer>
+<footer>${esc(config.siteName)}${site.gaId ? '<br><small>このサイトはアクセス解析にGoogleアナリティクス（Cookie）を使っています。集めた情報は個人を特定しない形で、サイトの改善に使います。</small>' : ''}</footer>
 </body>
 </html>
 `;
