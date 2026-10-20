@@ -53,7 +53,7 @@ function topicHtml(p) {
       <div class="rank">${i + 1}<span>位</span></div>
       <div class="body">
         <p class="name">${esc(shortName(r.name, 60))}</p>
-        <p class="meta">${esc(r.shop)}｜${r.price.toLocaleString('ja-JP')}円 / ${formatAmount(r.amount, p.measure)}（${r.servings}食分）</p>
+        <p class="meta">${esc(r.shop)}｜${r.price.toLocaleString('ja-JP')}円 / ${r.amountLabel ? esc(r.amountLabel) : `${formatAmount(r.amount, p.measure)}（${r.servings}食分）`}</p>
         <div class="per"><strong>${formatYen(r.perServing)}</strong>円 <span>/ ${esc(p.servingLabel)}</span></div>
         <div class="bar"><div style="width:${Math.round((r.perServing / max) * 100)}%"></div></div>
         ${r.reviewCount ? `<p class="review">レビュー ★${r.reviewAverage}（${r.reviewCount.toLocaleString('ja-JP')}件）</p>` : ''}

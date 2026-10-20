@@ -1,0 +1,30 @@
+{
+  "slug": "xmascake",
+  "name": "クリスマスケーキ",
+  "title": "クリスマスケーキ 1人分あたりの値段比較",
+  "keyword": "クリスマスケーキ 2026",
+  "measure": "count",
+  "unit": "号",
+  "goToPersons": true,
+  "servingLabel": "1人分",
+  "must": [
+    "クリスマス"
+  ],
+  "exclude": [
+    "ふるさと納税",
+    "定期便",
+    "ろうそく",
+    "キャンドル",
+    "ピック",
+    "飾りのみ",
+    "お歳暮",
+    "カップケーキ",
+    "手作りキット",
+    "キット",
+    "手作り"
+  ],
+  "sort": "-reviewCount",
+  "hits": 30,
+  "pages": 2,
+  "top": 5
+}

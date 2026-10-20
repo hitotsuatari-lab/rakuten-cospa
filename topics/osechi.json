@@ -1,0 +1,22 @@
+{
+  "slug": "osechi",
+  "name": "おせち",
+  "title": "おせち 1品あたりの値段比較",
+  "keyword": "おせち 2027",
+  "measure": "count",
+  "unit": "品",
+  "servingLabel": "1品",
+  "exclude": [
+    "ふるさと納税",
+    "定期便",
+    "お試し",
+    "試食",
+    "単品",
+    "重箱のみ",
+    "福袋"
+  ],
+  "sort": "-reviewCount",
+  "hits": 30,
+  "pages": 2,
+  "top": 5
+}

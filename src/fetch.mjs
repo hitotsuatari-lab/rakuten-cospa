@@ -4,7 +4,7 @@
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { parseAmount } from './amount.mjs';
+import { parseAmount, parseCount } from './amount.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const ENDPOINT = 'https://openapi.rakuten.co.jp/ichibams/api/IchibaItem/Search/20260701';
@@ -32,18 +32,21 @@ for (const item of rawItems) {
   if (seen.has(item.itemCode)) continue;
   seen.add(item.itemCode);
   if ((topic.exclude ?? []).some((w) => item.itemName.includes(w))) continue;
+  // "must" に書いた言葉が商品名に無いものは除く（クリスマスケーキに「お歳暮」のケーキが混ざるのを防ぐ）
+  if ((topic.must ?? []).some((w) => !item.itemName.includes(w))) continue;
 
-  const amount = parseAmount(item.itemName, measure);
+  const { amount, amountLabel } = readAmount(item.itemName);
   if (!amount) {
     needsCheck.push(item.itemName);
     continue;
   }
-  const servings = amount / topic.perServing;
+  const servings = amount / (topic.perServing ?? 1);
   ranked.push({
     name: item.itemName,
     shop: item.shopName,
     price: item.itemPrice,
     amount,
+    ...(amountLabel ? { amountLabel } : {}),
     servings: Math.round(servings * 10) / 10,
     perServing: Math.round((item.itemPrice / servings) * 10) / 10,
     url: item.affiliateUrl || item.itemUrl,
@@ -76,6 +79,21 @@ if (needsCheck.length) {
   needsCheck.slice(0, 10).forEach((n) => console.log(`  - ${n.slice(0, 60)}`));
 }
 console.log('\n※公開前に、上位の商品名と内容量が正しいか目で確認してください。');
+
+// 重さ・量（weight / volume）か、数（count）。数のときは topic の "unit"（品・人前・号など）を数える。
+// "goToPersons": true なら、ケーキの号を少なめの人数の目安にする（号×2−6：4号＝2人分、5号＝4人分、6号＝6人分）。
+// お店の表示（「5号 3〜4人」など）に近い、控えめな数にしている
+function readAmount(name) {
+  if (measure !== 'count') return { amount: parseAmount(name, measure) };
+  const c = parseCount(name, topic.unit, topic.range ?? 'max');
+  if (!c) return {};
+  if (topic.goToPersons) {
+    if (c.n < 4 || c.label.includes('〜')) return {};
+    const persons = c.n * 2 - 6;
+    return { amount: persons, amountLabel: `${c.label}（${persons}人分）` };
+  }
+  return { amount: c.n, amountLabel: c.label };
+}
 
 async function searchItems(page) {
   const params = new URLSearchParams({

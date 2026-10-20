@@ -39,3 +39,20 @@ export function formatAmount(amount, measure = 'weight') {
 export function formatYen(x) {
   return x.toLocaleString('ja-JP', { maximumFractionDigits: 1 });
 }
+
+// 商品名から「品」「人前」「号」などの数を読み取る（重さで比べにくい商品用）。
+// 「3〜4人前」のような幅は range で決める（max＝多いほう、min＝少ないほう）。
+// 違う数が2つ以上書かれているとき（「2人前 3人前」など）は、どれか分からないので null を返す。
+export function parseCount(name, unit, range = 'max') {
+  const text = name.normalize('NFKC');
+  const re = new RegExp(`(\\d+)\\s*(?:[〜~\\-]\\s*(\\d+)\\s*)?${unit}`, 'g');
+  const found = [...text.matchAll(re)].map((m) => ({ lo: +m[1], hi: m[2] ? +m[2] : +m[1] }));
+  const kinds = new Set(found.map((f) => `${f.lo}-${f.hi}`));
+  if (kinds.size !== 1) return null;
+  const { lo, hi } = found[0];
+  if (lo <= 0) return null;
+  return {
+    n: range === 'min' ? lo : hi,
+    label: lo === hi ? `${lo}${unit}` : `${lo}〜${hi}${unit}`,
+  };
+}

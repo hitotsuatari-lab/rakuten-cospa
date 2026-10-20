@@ -1,0 +1,23 @@
+{
+  "slug": "osechi2",
+  "name": "おせち 1人前",
+  "title": "おせち 1人前あたりの値段比較",
+  "keyword": "おせち 2027",
+  "measure": "count",
+  "unit": "人前",
+  "range": "max",
+  "servingLabel": "1人前",
+  "exclude": [
+    "ふるさと納税",
+    "定期便",
+    "お試し",
+    "試食",
+    "単品",
+    "重箱のみ",
+    "福袋"
+  ],
+  "sort": "-reviewCount",
+  "hits": 30,
+  "pages": 2,
+  "top": 5
+}

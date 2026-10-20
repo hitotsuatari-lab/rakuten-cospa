@@ -1,0 +1,14 @@
+{
+  "slug": "kazunoko",
+  "name": "数の子",
+  "title": "数の子 100gあたりの値段比較",
+  "keyword": "味付け数の子",
+  "measure": "weight",
+  "perServing": 100,
+  "servingLabel": "100g",
+  "exclude": ["ふるさと納税", "定期便", "松前漬", "セット", "子持ち昆布"],
+  "sort": "-reviewCount",
+  "hits": 30,
+  "pages": 2,
+  "top": 5
+}
