@@ -50,6 +50,7 @@ for (const item of rawItems) {
     servings: Math.round(servings * 10) / 10,
     perServing: Math.round((item.itemPrice / servings) * 10) / 10,
     url: item.affiliateUrl || item.itemUrl,
+    image: itemImage(item),
     reviewCount: item.reviewCount,
     reviewAverage: item.reviewAverage,
   });
@@ -93,6 +94,15 @@ function readAmount(name) {
     return { amount: persons, amountLabel: `${c.label}（${persons}人分）` };
   }
   return { amount: c.n, amountLabel: c.label };
+}
+
+// 楽天の商品画像（公開ページのランキングで、アフィリエイトリンク付きで表示する）。
+// API の画像は128px なので、ページで見やすい大きさ（240px）にする
+function itemImage(item) {
+  const raw = item.mediumImageUrls?.[0];
+  const url = typeof raw === 'string' ? raw : raw?.imageUrl;
+  if (!url) return undefined;
+  return url.replace(/_ex=\d+x\d+/, '_ex=240x240');
 }
 
 async function searchItems(page) {

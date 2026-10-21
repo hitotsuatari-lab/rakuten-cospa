@@ -52,13 +52,14 @@ function topicHtml(p) {
     <li class="item${i === 0 ? ' top' : ''}">
       <div class="rank">${i + 1}<span>位</span></div>
       <div class="body">
-        <p class="name">${esc(shortName(r.name, 60))}</p>
-        <p class="meta">${esc(r.shop)}｜${r.price.toLocaleString('ja-JP')}円 / ${r.amountLabel ? esc(r.amountLabel) : `${formatAmount(r.amount, p.measure)}（${r.servings}食分）`}</p>
+        <p class="name">${esc(p.labels[i + 1] ?? shortName(r.name, 60))}</p>
+        <p class="meta">${esc(r.shop)}｜${r.price.toLocaleString('ja-JP')}円 / ${r.amountLabel ? esc(r.amountLabel) : `${formatAmount(r.amount, p.measure)}${p.servingLabel.includes('食') ? `（${r.servings}食分）` : ''}`}</p>
         <div class="per"><strong>${formatYen(r.perServing)}</strong>円 <span>/ ${esc(p.servingLabel)}</span></div>
         <div class="bar"><div style="width:${Math.round((r.perServing / max) * 100)}%"></div></div>
         ${r.reviewCount ? `<p class="review">レビュー ★${r.reviewAverage}（${r.reviewCount.toLocaleString('ja-JP')}件）</p>` : ''}
         <a class="btn" href="${esc(r.url)}" target="_blank" rel="sponsored noopener">楽天で見る</a>
       </div>
+      ${r.image ? `<a class="pic" href="${esc(r.url)}" target="_blank" rel="sponsored noopener"><img src="${esc(r.image)}" alt="${esc(p.labels[i + 1] ?? shortName(r.name, 30))}" loading="lazy"></a>` : ''}
     </li>`,
     )
     .join('');
@@ -135,7 +136,7 @@ async function makeChannelAssets() {
 async function makeThumbnail(p) {
   let dirs = [];
   try {
-    dirs = (await readdir(OUT)).filter((d) => d.endsWith(`_${p.slug}`)).sort().reverse();
+    dirs = (await readdir(OUT)).filter((d) => d.endsWith(`_${p.slug}`) || d.endsWith(`_${p.slug}_投稿済`)).sort().reverse();
   } catch {}
   for (const d of dirs) {
     const video = path.join(OUT, d, 'ショート動画.mp4');
@@ -273,6 +274,9 @@ h1{font-size:22px;margin:16px 0 4px;font-weight:600}
 .back{color:var(--accent);font-size:14px;text-decoration:none}
 .ranking{list-style:none;padding:0;margin:16px 0}
 .item{display:flex;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:12px}
+.pic{flex:none;width:96px;height:96px;border-radius:10px;overflow:hidden;background:#fff;border:1px solid var(--line);align-self:flex-start}
+.pic img{width:100%;height:100%;object-fit:contain;display:block}
+@media (min-width:640px){.pic{width:128px;height:128px}}
 .item.top{border:2px solid var(--accent)}
 .rank{font-size:26px;font-weight:700;color:var(--accent);min-width:44px;line-height:1.2}
 .rank span{font-size:13px}
