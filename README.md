@@ -4,7 +4,7 @@
 
 ```
 topics/pasta.json  ─(fetch)→  data/pasta.json  ─(build)→  docs/pasta.html（公開ページ）
-  何を比べるか          楽天APIの結果                    out/<日付>_pasta/概要欄.txt
+  何を比べるか          楽天APIの結果                    out/<日付>_pasta/投稿情報.txt
 ```
 
 ## 毎回の使い方
@@ -17,7 +17,7 @@ node src/publish.mjs                   build してから、公開してよい�
 node video/render.mjs videos/pasta.json  読み上げ付きの縦型ショートを out/<日付>_pasta/ショート動画.mp4 に書き出す（約2分半）
 ```
 
-YouTubeに投稿するものは、データを取った日付とテーマのフォルダ `out/<日付>_<テーマ>/`（例 `out/20261016_rice/`）にまとまります（`ショート動画.mp4` と `概要欄.txt`）。別の日に取り直すと、新しい日付のフォルダができます。
+YouTubeに投稿するものは、データを取った日付とテーマのフォルダ `out/<日付>_<テーマ>/`（例 `out/20261016_rice/`）にまとまります（`ショート動画.mp4` と `投稿情報.txt`）。別の日に取り直すと、新しい日付のフォルダができます。
 インスタのリール用は、その中の `インスタ/` フォルダにできます（`リール動画.mp4` はBGMなしで読み上げだけ、`キャプション.txt` はPR表記と音声クレジット入り）。
 
 動画を作る前に **VOICEVOX のアプリを起動**しておきます（声は青山龍星。`video/voice.json` で変更）。

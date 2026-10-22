@@ -1,7 +1,7 @@
-// data/*.json から一覧ページ（docs/）と動画の概要欄テキスト（out/）を作る。
+// data/*.json から一覧ページ（docs/）と動画の投稿情報（out/<取得日>_<テーマ>/投稿情報.txt）を作る。
 // 使い方: node src/build.mjs
 
-import { readFile, writeFile, mkdir, readdir, access } from 'node:fs/promises';
+import { readFile, writeFile, mkdir, readdir, access, rm } from 'node:fs/promises';
 import { spawnSync } from 'node:child_process';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -19,9 +19,17 @@ for (const file of (await readdir(path.join(ROOT, 'data'))).filter((f) => f.ends
   const page = JSON.parse(await readFile(path.join(ROOT, 'data', file), 'utf8'));
   // 動画（videos/<slug>.json）で表示名を指定していれば、概要欄と一覧でも同じ名前を使う
   try {
-    page.labels = JSON.parse(await readFile(path.join(ROOT, 'videos', file), 'utf8')).labels ?? {};
+    const video = JSON.parse(await readFile(path.join(ROOT, 'videos', file), 'utf8'));
+    page.labels = video.labels ?? {};
+    page.commentDraft = video.commentDraft === true;
   } catch {
     page.labels = {};
+  }
+  // 分野（食品・季節・日用品など）は topics/<slug>.json の "category"。無ければ食品
+  try {
+    page.category = JSON.parse(await readFile(path.join(ROOT, 'topics', file), 'utf8')).category ?? 'food';
+  } catch {
+    page.category = 'food';
   }
   pages.push(page);
 }
@@ -33,16 +41,23 @@ await writeFile(path.join(DOCS, '.nojekyll'), '');
 await writeFile(path.join(DOCS, 'style.css'), css());
 const site = await makeChannelAssets();
 for (const p of pages) p.thumb = await makeThumbnail(p);
-await writeFile(path.join(DOCS, 'index.html'), indexHtml(pages));
+await writeFile(path.join(DOCS, 'index.html'), indexHtml(pages, null));
+// 分野ごとの一覧ページ（例 food.html）。比較が1本もない分野は、タブもページも作らない
+for (const c of usedCategories()) {
+  if (pages.some((p) => p.slug === c.id)) throw new Error(`分野のID「${c.id}」が比較のslugと同じです。site.json の categories を直してください`);
+  await writeFile(path.join(DOCS, `${c.id}.html`), indexHtml(pages.filter((p) => p.category === c.id), c));
+}
 for (const p of pages) {
   await writeFile(path.join(DOCS, `${p.slug}.html`), topicHtml(p));
   // 動画と同じ日付とテーマのフォルダ（out/20261016_rice/ など）に入れる
   await mkdir(outDir(p), { recursive: true });
-  await writeFile(path.join(outDir(p), '概要欄.txt'), description(p));
+  // 投稿の画面で上から順に入力できる形（YouTube自動作成の投稿情報.txt と同じ形。2026-10-22 に本人が頼んだ）
+  await writeFile(path.join(outDir(p), '投稿情報.txt'), '﻿' + postInfo(p));
+  await rm(path.join(outDir(p), '概要欄.txt'), { force: true });
   await mkdir(path.join(outDir(p), 'インスタ'), { recursive: true });
   await writeFile(path.join(outDir(p), 'インスタ', 'キャプション.txt'), instaCaption(p));
 }
-console.log(`${pages.length} ページを docs/ に、概要欄テキストを out/<取得日>_<テーマ>/ に作りました`);
+console.log(`${pages.length} ページを docs/ に、投稿情報.txt を out/<取得日>_<テーマ>/ に作りました`);
 
 function topicHtml(p) {
   const max = Math.max(...p.ranking.map((r) => r.perServing));
@@ -76,10 +91,21 @@ function topicHtml(p) {
   );
 }
 
-// YouTubeのチャンネルページと同じ並び：バナー → アイコンと名前 → ショートの一覧（新しい順に左上から）
-function indexHtml(list) {
+// site.json の categories のうち、比較が1本以上ある分野（並びは site.json の順）
+function usedCategories() {
+  return (site.categories ?? []).filter((c) => pages.some((p) => p.category === c.id));
+}
+
+// YouTubeのチャンネルページと同じ並び：バナー → アイコンと名前 → タブ → ショートの一覧（新しい順に左上から）。
+// active が null ならトップ（すべて）、分野を渡すとその分野だけの一覧になる
+function indexHtml(list, active) {
+  const newest = pages[0];
+  const tabs = [`<a href="./"${active ? '' : ' class="on"'}>すべて</a>`]
+    .concat(usedCategories().map((c) => `<a href="${esc(c.id)}.html"${active?.id === c.id ? ' class="on"' : ''}>${esc(c.name)}</a>`))
+    .join('');
   const cards = list
-    .map((p, i) => {
+    .map((p) => {
+      const i = p === newest ? 0 : 1;
       const top = p.ranking[0];
       const thumb = p.thumb
         ? `<img src="${esc(p.thumb)}" alt="" loading="lazy">`
@@ -93,19 +119,19 @@ function indexHtml(list) {
     })
     .join('');
   return layout(
-    config.siteName,
+    active ? `${active.name}｜${config.siteName}` : config.siteName,
     `
   ${site.banner ? `<div class="ch-banner"><img src="${esc(site.banner)}" alt=""></div>` : ''}
   <div class="ch-head">
     ${site.icon ? `<img class="ch-icon" src="${esc(site.icon)}" alt="">` : ''}
     <div class="ch-info">
       <h1>${esc(config.siteName)}</h1>
-      <p class="ch-meta">${esc(site.handle ?? '')}${site.handle ? '・' : ''}ショート ${list.length} 本</p>
+      <p class="ch-meta">${esc(site.handle ?? '')}${site.handle ? '・' : ''}ショート ${pages.length} 本</p>
       ${site.description ? `<p class="ch-desc">${esc(site.description)}</p>` : ''}
       ${site.youtubeUrl ? `<a class="ch-yt" href="${esc(site.youtubeUrl)}" target="_blank" rel="noopener">YouTubeチャンネルを見る</a>` : ''}
     </div>
   </div>
-  <nav class="ch-tabs"><span class="on">ショート</span></nav>
+  <nav class="ch-tabs">${tabs}</nav>
   <ul class="shorts">${cards}
   </ul>`,
     'wide',
@@ -205,6 +231,56 @@ ${config.voiceCredit ? `音声: ${config.voiceCredit}\n` : ''}
 `;
 }
 
+// YouTube Studio で上から順に入力するための1枚。コピーする部分は「ここから」「ここまで」で囲む
+function postInfo(p) {
+  const name = p.name ?? p.title.split(/[ 　]/)[0];
+  const block = (s) => `――――― ここから ―――――\n${s.trim()}\n――――― ここまで ―――――`;
+  const tags = ['楽天', 'コスパ', '節約', '比較', name, `${p.servingLabel}あたり`, config.siteName];
+  return `YouTube の「作成」→「ショート動画をアップロード」で、上から順に入力してください。
+「ここから」と「ここまで」の間をコピーして貼り付けます（線そのものは入れません）。
+${p.commentDraft ? '\n★ 動画の「ひとこと」が仮の文のままです（videos の commentDraft）。投稿の前に書き換えて、動画を作り直してください。\n' : ''}
+■ 動画ファイル
+ショート動画.mp4
+
+■ タイトル（100文字以内）
+${block(`楽天で売れてる${name}、${p.servingLabel}あたり最安は？`)}
+
+ほかのタイトル案（こちらに差し替えても大丈夫です）:
+・【${p.title}】
+・${name}は${p.servingLabel}あたりいくら？楽天の売れ筋を比べてみた
+
+■ 説明
+${block(description(p))}
+
+■ サムネイル
+ショートは動画の中の場面から選びます（スマホの YouTube アプリで、アップロードのときに選べます）
+
+■ 視聴者
+いいえ、子ども向けではありません
+
+■ 詳細 → タグ（カンマ区切りのまま貼り付け）
+${block(tags.join(','))}
+
+■ 詳細 → 言語
+日本語
+
+■ 詳細 → カテゴリ
+ハウツーとスタイル
+
+■ 詳細 → 有料プロモーション
+チェックを入れる（楽天アフィリエイトの紹介動画のため。日本のステマ規制対策）
+
+■ 詳細 → 改変されたコンテンツ
+いいえ（値段のランキングと背景の絵で、実在の人物・出来事と見間違える映像ではないため）
+
+■ 公開設定
+まず「非公開」か「限定公開」で上げ、スマホで見て問題なければ「公開」または「予約」に
+
+■ インスタ（リール）
+インスタ フォルダの リール動画.mp4 と キャプション.txt を使います（BGMはインスタのアプリで付けます）
+`;
+}
+
 // インスタのリール用。リンクは押せないので「プロフのリンク」へ案内する。
 // ハッシュタグは少なめ（多すぎると表示されにくい／上限がある）。PR表記は1行目に置く
 function instaCaption(p) {
@@ -300,8 +376,9 @@ main.wide{max-width:1100px}
 .ch-meta{margin:2px 0;font-size:13px;color:var(--sub)}
 .ch-desc{margin:4px 0 8px;font-size:14px;color:var(--sub)}
 .ch-yt{display:inline-block;padding:7px 16px;border-radius:999px;background:var(--text);color:var(--bg);font-size:13px;font-weight:600;text-decoration:none}
-.ch-tabs{border-bottom:1px solid var(--line);margin:12px 0 16px}
-.ch-tabs .on{display:inline-block;padding:8px 2px;font-weight:700;border-bottom:3px solid var(--text)}
+.ch-tabs{border-bottom:1px solid var(--line);margin:12px 0 16px;white-space:nowrap;overflow-x:auto}
+.ch-tabs a{display:inline-block;padding:8px 2px;margin-right:22px;color:var(--sub);font-weight:600;text-decoration:none;border-bottom:3px solid transparent}
+.ch-tabs a.on{color:var(--text);font-weight:700;border-bottom-color:var(--text)}
 .shorts{list-style:none;padding:0;margin:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px 10px}
 .shorts a{color:var(--text);text-decoration:none;display:block}
 .thumb{position:relative;aspect-ratio:9/16;border-radius:12px;overflow:hidden;background:var(--line)}

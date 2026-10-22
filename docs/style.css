@@ -36,8 +36,9 @@ main.wide{max-width:1100px}
 .ch-meta{margin:2px 0;font-size:13px;color:var(--sub)}
 .ch-desc{margin:4px 0 8px;font-size:14px;color:var(--sub)}
 .ch-yt{display:inline-block;padding:7px 16px;border-radius:999px;background:var(--text);color:var(--bg);font-size:13px;font-weight:600;text-decoration:none}
-.ch-tabs{border-bottom:1px solid var(--line);margin:12px 0 16px}
-.ch-tabs .on{display:inline-block;padding:8px 2px;font-weight:700;border-bottom:3px solid var(--text)}
+.ch-tabs{border-bottom:1px solid var(--line);margin:12px 0 16px;white-space:nowrap;overflow-x:auto}
+.ch-tabs a{display:inline-block;padding:8px 2px;margin-right:22px;color:var(--sub);font-weight:600;text-decoration:none;border-bottom:3px solid transparent}
+.ch-tabs a.on{color:var(--text);font-weight:700;border-bottom-color:var(--text)}
 .shorts{list-style:none;padding:0;margin:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px 10px}
 .shorts a{color:var(--text);text-decoration:none;display:block}
 .thumb{position:relative;aspect-ratio:9/16;border-radius:12px;overflow:hidden;background:var(--line)}
