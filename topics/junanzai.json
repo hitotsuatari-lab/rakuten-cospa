@@ -1,0 +1,27 @@
+{
+  "slug": "junanzai",
+  "name": "柔軟剤",
+  "category": "daily",
+  "title": "柔軟剤 100mlあたりの値段比較",
+  "keyword": "柔軟剤 詰め替え 大容量",
+  "measure": "volume",
+  "perServing": 100,
+  "servingLabel": "100ml",
+  "must": [
+    "柔軟剤"
+  ],
+  "exclude": [
+    "ふるさと納税",
+    "定期便",
+    "頒布会",
+    "洗濯洗剤 詰め替え用 スノール",
+    "柔軟剤不要",
+    "洗濯洗剤",
+    "洗濯せっけん",
+    "石けん"
+  ],
+  "sort": "-reviewCount",
+  "hits": 30,
+  "pages": 2,
+  "top": 5
+}

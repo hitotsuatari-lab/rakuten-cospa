@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>日用品｜ひとつあたり研究所</title>
+<link rel="stylesheet" href="style.css">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-SHMKFY7KS9"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-SHMKFY7KS9');</script>
+</head>
+<body>
+<p class="pr">PR｜このページは楽天アフィリエイトを利用しています</p>
+<main class="wide">
+  <div class="ch-banner"><img src="assets/banner.jpg" alt=""></div>
+  <div class="ch-head">
+    <img class="ch-icon" src="assets/icon.jpg" alt="">
+    <div class="ch-info">
+      <h1>ひとつあたり研究所</h1>
+      <p class="ch-meta">@hitotsuatari-lab・ショート 22 本</p>
+      <p class="ch-desc">楽天の売れ筋商品を「1個あたり」「1食あたり」の値段で比べています。動画で紹介した商品は、各ショートを押すと見られます。</p>
+      <a class="ch-yt" href="https://www.youtube.com/@hitotsuatari-lab" target="_blank" rel="noopener">YouTubeチャンネルを見る</a>
+    </div>
+  </div>
+  
+  <nav class="ch-tabs"><a href="./">すべて</a><a href="food.html">食品</a><a href="season.html">季節・行事</a><a href="daily.html" class="on">日用品</a><a href="clothing.html">衣類</a></nav>
+  <ul class="shorts">
+    <li><a href="mask.html">
+      <div class="thumb"><img src="thumbs/mask.jpg?v=20261025" alt="" loading="lazy"><span class="new">最新</span></div>
+      <p class="st">マスク 1枚あたりの値段比較</p>
+      <p class="sm">1位 血色カラー 不織布 50枚 7.4円・2026年10月25日</p>
+    </a></li>
+    <li><a href="junanzai.html">
+      <div class="thumb"><img src="thumbs/junanzai.jpg?v=20261025" alt="" loading="lazy"></div>
+      <p class="st">柔軟剤 100mlあたりの値段比較</p>
+      <p class="sm">1位 ソフラン 消臭 4L×3個 46.7円・2026年10月25日</p>
+    </a></li>
+    <li><a href="denchi.html">
+      <div class="thumb"><img src="thumbs/denchi.jpg?v=20261025" alt="" loading="lazy"></div>
+      <p class="st">乾電池（単3） 1本あたりの値段比較</p>
+      <p class="sm">1位 単3アルカリ 40本 19.1円・2026年10月25日</p>
+    </a></li>
+  </ul>
+</main>
+<footer>ひとつあたり研究所<br><small>このサイトはアクセス解析にGoogleアナリティクス（Cookie）を使っています。集めた情報は個人を特定しない形で、サイトの改善に使います。</small></footer>
+<script>
+document.querySelectorAll('.pt[data-end]').forEach(function(e){if(new Date(e.dataset.end)<new Date())e.remove();});
+var hero=document.getElementById('hero'),sticky=document.getElementById('sticky');
+if(hero&&sticky&&'IntersectionObserver' in window){new IntersectionObserver(function(es){sticky.hidden=es[0].isIntersecting;}).observe(hero);document.body.classList.add('has-sticky');}
+document.addEventListener('click',function(ev){var a=ev.target.closest&&ev.target.closest('a[data-pos]');if(a&&window.gtag)gtag('event','rakuten_click',{pos:a.dataset.pos,page:location.pathname});});
+</script>
+</body>
+</html>

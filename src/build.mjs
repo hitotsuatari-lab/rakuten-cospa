@@ -251,6 +251,14 @@ async function makeThumbnail(p) {
     // 作り直したときにブラウザが古い画像を出さないよう、日付を付ける
     if (r.status === 0) return `thumbs/${p.slug}.jpg?v=${d.split('_')[0]}`;
   }
+  // 動画をまだ作っていない比較は、video/thumb.mjs が作った「ページ用サムネイル.jpg」を使う
+  for (const d of dirs) {
+    const still = path.join(OUT, d, 'ページ用サムネイル.jpg');
+    if (!(await exists(still))) continue;
+    await mkdir(path.join(DOCS, 'thumbs'), { recursive: true });
+    const r = spawnSync(ffmpegPath, ['-y', '-loglevel', 'error', '-i', still, '-vf', 'scale=360:640', '-q:v', '3', path.join(DOCS, 'thumbs', `${p.slug}.jpg`)]);
+    if (r.status === 0) return `thumbs/${p.slug}.jpg?v=${d.split('_')[0]}`;
+  }
   return null;
 }
 

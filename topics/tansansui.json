@@ -1,0 +1,25 @@
+{
+  "slug": "tansansui",
+  "name": "炭酸水",
+  "category": "food",
+  "title": "炭酸水 1Lあたりの値段比較",
+  "keyword": "炭酸水 500ml 24本",
+  "measure": "volume",
+  "perServing": 1000,
+  "servingLabel": "1L",
+  "must": [
+    "炭酸"
+  ],
+  "exclude": [
+    "ふるさと納税",
+    "定期便",
+    "頒布会",
+    "サーバー",
+    "メーカー",
+    "ガスシリンダー"
+  ],
+  "sort": "-reviewCount",
+  "hits": 30,
+  "pages": 2,
+  "top": 5
+}

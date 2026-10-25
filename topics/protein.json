@@ -1,0 +1,23 @@
+{
+  "slug": "protein",
+  "name": "プロテイン",
+  "category": "food",
+  "title": "プロテイン 100gあたりの値段比較",
+  "keyword": "プロテイン ホエイ 1kg",
+  "measure": "weight",
+  "perServing": 100,
+  "servingLabel": "100g",
+  "exclude": [
+    "ふるさと納税",
+    "定期便",
+    "頒布会",
+    "シェイカー",
+    "バー",
+    "お試し",
+    "選べる"
+  ],
+  "sort": "-reviewCount",
+  "hits": 30,
+  "pages": 2,
+  "top": 5
+}

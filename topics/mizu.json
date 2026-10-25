@@ -1,0 +1,21 @@
+{
+  "slug": "mizu",
+  "name": "水",
+  "category": "food",
+  "title": "水（2L） 1Lあたりの値段比較",
+  "keyword": "水 2L 12本",
+  "measure": "volume",
+  "perServing": 1000,
+  "servingLabel": "1L",
+  "exclude": [
+    "ふるさと納税",
+    "定期便",
+    "頒布会",
+    "サーバー",
+    "炭酸"
+  ],
+  "sort": "-reviewCount",
+  "hits": 30,
+  "pages": 2,
+  "top": 5
+}

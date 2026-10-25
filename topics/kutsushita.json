@@ -1,0 +1,19 @@
+{
+  "slug": "kutsushita",
+  "name": "靴下",
+  "category": "clothing",
+  "title": "靴下 1足あたりの値段比較",
+  "keyword": "靴下 メンズ セット",
+  "measure": "count",
+  "unit": "足",
+  "servingLabel": "1足",
+  "exclude": [
+    "ふるさと納税",
+    "定期便",
+    "頒布会"
+  ],
+  "sort": "-reviewCount",
+  "hits": 30,
+  "pages": 2,
+  "top": 5
+}

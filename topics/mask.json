@@ -1,0 +1,26 @@
+{
+  "slug": "mask",
+  "name": "マスク",
+  "category": "daily",
+  "title": "マスク 1枚あたりの値段比較",
+  "keyword": "マスク 不織布",
+  "measure": "count",
+  "unit": "枚",
+  "servingLabel": "1枚",
+  "exclude": [
+    "ふるさと納税",
+    "定期便",
+    "頒布会",
+    "布マスク",
+    "ウレタン",
+    "ケース",
+    "ホルダー",
+    "マスクケース",
+    "マスクホルダー",
+    "スポーツマスク"
+  ],
+  "sort": "-reviewCount",
+  "hits": 30,
+  "pages": 2,
+  "top": 5
+}

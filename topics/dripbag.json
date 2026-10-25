@@ -1,0 +1,22 @@
+{
+  "slug": "dripbag",
+  "name": "ドリップバッグ",
+  "category": "food",
+  "title": "ドリップバッグコーヒー 1杯あたりの値段比較",
+  "keyword": "ドリップバッグ コーヒー",
+  "measure": "count",
+  "unit": "袋",
+  "servingLabel": "1杯（1袋）",
+  "exclude": [
+    "ふるさと納税",
+    "定期便",
+    "頒布会",
+    "ギフト",
+    "お試し",
+    "紅茶"
+  ],
+  "sort": "-reviewCount",
+  "hits": 30,
+  "pages": 2,
+  "top": 5
+}

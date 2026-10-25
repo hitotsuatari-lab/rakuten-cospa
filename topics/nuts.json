@@ -1,0 +1,21 @@
+{
+  "slug": "nuts",
+  "name": "ミックスナッツ",
+  "category": "food",
+  "title": "ミックスナッツ 100gあたりの値段比較",
+  "keyword": "ミックスナッツ 素焼き",
+  "measure": "weight",
+  "perServing": 100,
+  "servingLabel": "100g",
+  "exclude": [
+    "ふるさと納税",
+    "定期便",
+    "頒布会",
+    "チョコ",
+    "ドライフルーツ入り"
+  ],
+  "sort": "-reviewCount",
+  "hits": 30,
+  "pages": 2,
+  "top": 5
+}

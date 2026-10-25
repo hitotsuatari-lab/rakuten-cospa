@@ -1,0 +1,22 @@
+{
+  "slug": "gyoza",
+  "name": "冷凍餃子",
+  "category": "food",
+  "title": "冷凍餃子 1個あたりの値段比較",
+  "keyword": "冷凍餃子",
+  "measure": "count",
+  "unit": "個",
+  "servingLabel": "1個",
+  "exclude": [
+    "ふるさと納税",
+    "定期便",
+    "頒布会",
+    "おまけ",
+    "タレのみ",
+    "皮のみ"
+  ],
+  "sort": "-reviewCount",
+  "hits": 30,
+  "pages": 2,
+  "top": 5
+}

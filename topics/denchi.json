@@ -1,0 +1,26 @@
+{
+  "slug": "denchi",
+  "name": "乾電池",
+  "category": "daily",
+  "title": "乾電池（単3） 1本あたりの値段比較",
+  "keyword": "単3 アルカリ 乾電池",
+  "measure": "count",
+  "unit": "本",
+  "servingLabel": "1本",
+  "must": [
+    "単3"
+  ],
+  "exclude": [
+    "ふるさと納税",
+    "定期便",
+    "頒布会",
+    "充電",
+    "単4",
+    "単1",
+    "単2"
+  ],
+  "sort": "-reviewCount",
+  "hits": 30,
+  "pages": 2,
+  "top": 5
+}
