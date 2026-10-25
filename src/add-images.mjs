@@ -1,6 +1,7 @@
-// 画像のない比較データ（data/*.json）に、楽天の商品画像のURLを足す。値段や順位は変えない。
+// 比較データ（data/*.json）に、楽天の商品画像のURLと、送料無料・ポイント倍率の情報を足す。値段や順位は変えない。
 // 使い方: node src/add-images.mjs
-// 商品ページのURL（item.rakuten.co.jp/<店>/<商品>/）から商品コードを作り、楽天APIで1件ずつ画像を聞く。
+// 商品ページのURL（item.rakuten.co.jp/<店>/<商品>/）から商品コードを作り、楽天APIで1件ずつ聞く。
+// 画像と送料の情報がそろっている商品は聞かない。
 
 import { readFile, writeFile, readdir } from 'node:fs/promises';
 import path from 'node:path';
@@ -17,22 +18,25 @@ for (const file of (await readdir(path.join(ROOT, 'data'))).filter((f) => f.ends
   const data = JSON.parse(await readFile(p, 'utf8'));
   let changed = false;
   for (const r of data.ranking) {
-    if (r.image) continue;
+    if (r.image && r.postageFlag !== undefined) continue;
     const code = itemCodeOf(r.url);
     // 商品コードで聞き、だめなら（URLの末尾が商品コードと違う店がある）店の中を商品名で探す
-    const image = code ? (await lookupImage({ itemCode: code })) ?? (await searchInShop(code, r.name)) : undefined;
-    if (image) {
-      r.image = image;
+    const item = code ? (await lookupItem({ itemCode: code })) ?? (await searchInShop(code, r.name)) : undefined;
+    if (item) {
+      r.image ??= imageOf(item);
+      r.postageFlag = item.postageFlag;
+      r.pointRate = item.pointRate;
+      r.pointRateEndTime = item.pointRateEndTime || undefined;
       changed = true;
       added++;
     } else {
       missed++;
-      console.log(`  画像が見つからない: ${file} ${r.name.slice(0, 30)}`);
+      console.log(`  商品が見つからない: ${file} ${r.name.slice(0, 30)}`);
     }
   }
   if (changed) await writeFile(p, JSON.stringify(data, null, 2) + '\n');
 }
-console.log(`画像を ${added} 件足しました${missed ? `（見つからない ${missed} 件）` : ''}`);
+console.log(`${added} 件に画像・送料・ポイントの情報を足しました${missed ? `（見つからない ${missed} 件）` : ''}`);
 
 // アフィリエイトURLの pc=（または商品ページのURLそのもの）から「店:商品」の商品コードを作る
 function itemCodeOf(url) {
@@ -47,9 +51,9 @@ function itemCodeOf(url) {
   return m ? `${m[1]}:${m[2]}` : null;
 }
 
-async function lookupImage(params) {
+async function lookupItem(params) {
   const items = await search(params);
-  return imageOf(items[0]);
+  return items[0];
 }
 
 // 店の中を、商品名の最初のほうの言葉で探し、商品ページのURLが同じものを選ぶ
@@ -62,8 +66,7 @@ async function searchInShop(code, name) {
     .slice(0, 3)
     .join(' ');
   const items = await search({ shopCode: shop, keyword: words || name.slice(0, 20), hits: '30' });
-  const hit = items.find((it) => (it.itemUrl ?? '').includes(`/${shop}/${id}/`));
-  return imageOf(hit);
+  return items.find((it) => (it.itemUrl ?? '').includes(`/${shop}/${id}/`));
 }
 
 async function search(params) {

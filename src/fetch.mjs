@@ -51,6 +51,7 @@ for (const item of rawItems) {
     perServing: Math.round((item.itemPrice / servings) * 10) / 10,
     url: item.affiliateUrl || item.itemUrl,
     image: itemImage(item),
+    ...salesInfo(item),
     reviewCount: item.reviewCount,
     reviewAverage: item.reviewAverage,
   });
@@ -103,6 +104,15 @@ function itemImage(item) {
   const url = typeof raw === 'string' ? raw : raw?.imageUrl;
   if (!url) return undefined;
   return url.replace(/_ex=\d+x\d+/, '_ex=240x240');
+}
+
+// 公開ページで「送料無料」「ポイント◯倍」の印に使う。ポイント倍率は期限（pointRateEndTime）が過ぎたら表示しない
+function salesInfo(item) {
+  return {
+    postageFlag: item.postageFlag, // 0＝送料込み（送料無料）、1＝送料別
+    pointRate: item.pointRate,
+    pointRateEndTime: item.pointRateEndTime || undefined,
+  };
 }
 
 async function searchItems(page) {

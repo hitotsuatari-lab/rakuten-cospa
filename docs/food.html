@@ -21,6 +21,7 @@
       <a class="ch-yt" href="https://www.youtube.com/@hitotsuatari-lab" target="_blank" rel="noopener">YouTubeチャンネルを見る</a>
     </div>
   </div>
+  
   <nav class="ch-tabs"><a href="./">すべて</a><a href="food.html" class="on">食品</a><a href="season.html">季節・行事</a></nav>
   <ul class="shorts">
     <li><a href="kazunoko.html">
@@ -66,5 +67,11 @@
   </ul>
 </main>
 <footer>ひとつあたり研究所<br><small>このサイトはアクセス解析にGoogleアナリティクス（Cookie）を使っています。集めた情報は個人を特定しない形で、サイトの改善に使います。</small></footer>
+<script>
+document.querySelectorAll('.pt[data-end]').forEach(function(e){if(new Date(e.dataset.end)<new Date())e.remove();});
+var hero=document.getElementById('hero'),sticky=document.getElementById('sticky');
+if(hero&&sticky&&'IntersectionObserver' in window){new IntersectionObserver(function(es){sticky.hidden=es[0].isIntersecting;}).observe(hero);document.body.classList.add('has-sticky');}
+document.addEventListener('click',function(ev){var a=ev.target.closest&&ev.target.closest('a[data-pos]');if(a&&window.gtag)gtag('event','rakuten_click',{pos:a.dataset.pos,page:location.pathname});});
+</script>
 </body>
 </html>

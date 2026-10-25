@@ -21,6 +21,19 @@
       <a class="ch-yt" href="https://www.youtube.com/@hitotsuatari-lab" target="_blank" rel="noopener">YouTubeチャンネルを見る</a>
     </div>
   </div>
+  
+  <section class="latest">
+    <a class="latest-thumb" href="xmascake.html"><img src="thumbs/xmascake.jpg?v=20261020" alt=""></a>
+    <div class="latest-body">
+      <p class="latest-label">最新の比較</p>
+      <p class="latest-title">クリスマスケーキ 1人分あたりの値段比較</p>
+      <p class="latest-top">1位 安納芋キャラメルムース 5号<br><b>1,135.3円</b> / 1人分</p>
+      <div class="latest-btns">
+        <a class="go" href="https://hb.afl.rakuten.co.jp/hgc/g00pt402.iujakc3f.g00pt402.iujal007/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Foimoya%2F50715%2F&amp;m=http%3A%2F%2Fm.rakuten.co.jp%2Foimoya%2Fi%2F10002277%2F&amp;rafcid=wsc_i_is_44ab75ea-a1c3-45bf-963d-dda8a8c13c38" target="_blank" rel="sponsored noopener" data-pos="latest-top1">楽天で1位を見る</a>
+        <a class="see" href="xmascake.html">5位まで比べる</a>
+      </div>
+    </div>
+  </section>
   <nav class="ch-tabs"><a href="./" class="on">すべて</a><a href="food.html">食品</a><a href="season.html">季節・行事</a></nav>
   <ul class="shorts">
     <li><a href="xmascake.html">
@@ -86,5 +99,11 @@
   </ul>
 </main>
 <footer>ひとつあたり研究所<br><small>このサイトはアクセス解析にGoogleアナリティクス（Cookie）を使っています。集めた情報は個人を特定しない形で、サイトの改善に使います。</small></footer>
+<script>
+document.querySelectorAll('.pt[data-end]').forEach(function(e){if(new Date(e.dataset.end)<new Date())e.remove();});
+var hero=document.getElementById('hero'),sticky=document.getElementById('sticky');
+if(hero&&sticky&&'IntersectionObserver' in window){new IntersectionObserver(function(es){sticky.hidden=es[0].isIntersecting;}).observe(hero);document.body.classList.add('has-sticky');}
+document.addEventListener('click',function(ev){var a=ev.target.closest&&ev.target.closest('a[data-pos]');if(a&&window.gtag)gtag('event','rakuten_click',{pos:a.dataset.pos,page:location.pathname});});
+</script>
 </body>
 </html>

@@ -22,6 +22,8 @@ for (const file of (await readdir(path.join(ROOT, 'data'))).filter((f) => f.ends
     const video = JSON.parse(await readFile(path.join(ROOT, 'videos', file), 'utf8'));
     page.labels = video.labels ?? {};
     page.commentDraft = video.commentDraft === true;
+    // 動画の「ひとこと」を比較ページにも出す（仮の文のときは出さない）
+    page.comment = page.commentDraft ? [] : (video.comment ?? []);
   } catch {
     page.labels = {};
   }
@@ -56,39 +58,94 @@ for (const p of pages) {
   await rm(path.join(outDir(p), '概要欄.txt'), { force: true });
   await mkdir(path.join(outDir(p), 'インスタ'), { recursive: true });
   await writeFile(path.join(outDir(p), 'インスタ', 'キャプション.txt'), instaCaption(p));
+  await writeFile(path.join(outDir(p), 'インスタ', 'ストーリーズ用リンク.txt'), storyLink(p));
+  await makeThreadsPost(p);
 }
 console.log(`${pages.length} ページを docs/ に、投稿情報.txt を out/<取得日>_<テーマ>/ に作りました`);
 
+// 比較ページ。SNSから来た人がスマホの最初の画面で決められるよう、
+// 一番上に「結論」（1位の写真・値段・大きなボタン）、次に動画の「ひとこと」、その下にランキング。
+// 結論の枠が見えなくなったら、画面の下に1位のボタンを出す。
+// 楽天へのリンクには data-pos（結論／順位／下のボタン）を付け、アナリティクスで「どこが押されたか」を数える
 function topicHtml(p) {
   const max = Math.max(...p.ranking.map((r) => r.perServing));
+  const nameOf = (r, i, n) => p.labels[i + 1] ?? shortName(r.name, n);
+  const amountOf = (r) =>
+    r.amountLabel ? esc(r.amountLabel) : `${formatAmount(r.amount, p.measure)}${p.servingLabel.includes('食') ? `（${r.servings}食分）` : ''}`;
+  const link = (r, pos, cls, inner) =>
+    `<a class="${cls}" href="${esc(r.url)}" target="_blank" rel="sponsored noopener" data-pos="${pos}">${inner}</a>`;
   const rows = p.ranking
     .map(
       (r, i) => `
     <li class="item${i === 0 ? ' top' : ''}">
       <div class="rank">${i + 1}<span>位</span></div>
       <div class="body">
-        <p class="name">${esc(p.labels[i + 1] ?? shortName(r.name, 60))}</p>
-        <p class="meta">${esc(r.shop)}｜${r.price.toLocaleString('ja-JP')}円 / ${r.amountLabel ? esc(r.amountLabel) : `${formatAmount(r.amount, p.measure)}${p.servingLabel.includes('食') ? `（${r.servings}食分）` : ''}`}</p>
+        <p class="name">${esc(nameOf(r, i, 60))}</p>
+        <p class="meta">${esc(r.shop)}｜${r.price.toLocaleString('ja-JP')}円 / ${amountOf(r)}</p>
+        ${badges(r)}
         <div class="per"><strong>${formatYen(r.perServing)}</strong>円 <span>/ ${esc(p.servingLabel)}</span></div>
         <div class="bar"><div style="width:${Math.round((r.perServing / max) * 100)}%"></div></div>
         ${r.reviewCount ? `<p class="review">レビュー ★${r.reviewAverage}（${r.reviewCount.toLocaleString('ja-JP')}件）</p>` : ''}
-        <a class="btn" href="${esc(r.url)}" target="_blank" rel="sponsored noopener">楽天で見る</a>
+        ${link(r, `rank${i + 1}`, 'btn', '楽天で見る')}
       </div>
-      ${r.image ? `<a class="pic" href="${esc(r.url)}" target="_blank" rel="sponsored noopener"><img src="${esc(r.image)}" alt="${esc(p.labels[i + 1] ?? shortName(r.name, 30))}" loading="lazy"></a>` : ''}
+      ${r.image ? link(r, `rank${i + 1}-pic`, 'pic', `<img src="${esc(r.image)}" alt="${esc(nameOf(r, i, 30))}" loading="lazy">`) : ''}
     </li>`,
     )
     .join('');
+  const top = p.ranking[0];
+  const hero = top
+    ? `
+  <section class="hero" id="hero">
+    <p class="hero-label">結論：${esc(p.servingLabel)}あたり最安は</p>
+    ${top.image ? link(top, 'hero-pic', 'hero-pic', `<img src="${esc(top.image)}" alt="${esc(nameOf(top, 0, 30))}">`) : ''}
+    <p class="hero-name">${esc(nameOf(top, 0, 40))}</p>
+    <p class="hero-per"><strong>${formatYen(top.perServing)}</strong>円 <span>/ ${esc(p.servingLabel)}</span></p>
+    <p class="hero-meta">${top.price.toLocaleString('ja-JP')}円・${amountOf(top)}${top.reviewCount ? `・★${top.reviewAverage}（${top.reviewCount.toLocaleString('ja-JP')}件）` : ''}</p>
+    ${badges(top)}
+    ${link(top, 'hero', 'hero-btn', '楽天で1位の商品を見る')}
+    <a class="hero-more" href="#ranking">2位〜${p.ranking.length}位も見る ↓</a>
+  </section>`
+    : '';
+  const comment = p.comment?.length
+    ? `
+  <section class="comment">
+    <p class="comment-tag">ひとこと</p>
+    ${p.comment.map((l) => `<p>${esc(l)}</p>`).join('\n    ')}
+  </section>`
+    : '';
+  const sticky = top
+    ? `
+  <div class="sticky" id="sticky" hidden>
+    <span class="sticky-text">1位 ${esc(nameOf(top, 0, 18))}<br><b>${formatYen(top.perServing)}円</b> / ${esc(p.servingLabel)}</span>
+    ${link(top, 'sticky', 'sticky-btn', '楽天で見る')}
+  </div>`
+    : '';
   return layout(
     p.title,
     `
   <a class="back" href="./">← 比較の一覧</a>
   <h1>${esc(p.title)}</h1>
   <p class="date">${formatDate(p.fetchedAt)} 時点の価格・安い順</p>
-  ${p.sample ? '<p class="sample">これはサンプルデータです。実在の商品ではありません。</p>' : ''}
+  ${p.sample ? '<p class="sample">これはサンプルデータです。実在の商品ではありません。</p>' : ''}${hero}${comment}
+  <h2 class="rank-title" id="ranking">${esc(p.servingLabel)}あたりの値段ランキング</h2>
   <ol class="ranking">${rows}
   </ol>
-  <p class="note">価格は調査時点のものです。最新の価格・送料はリンク先の商品ページで確認してください。${esc(p.servingLabel)}あたりの値段は、商品名に書かれた内容量から計算しています。</p>`,
+  <p class="note">価格は調査時点のものです。最新の価格・送料・ポイントはリンク先の商品ページで確認してください。${esc(p.servingLabel)}あたりの値段は、商品名に書かれた内容量から計算しています。</p>${sticky}`,
   );
+}
+
+// 「送料込み」と「ポイント◯倍」の印。ポイントは期限が過ぎたらページ側の小さなスクリプトで隠す
+function badges(r) {
+  const b = [];
+  if (r.postageFlag === 0) b.push('<span class="badge">送料込み</span>');
+  if (r.pointRate > 1 && r.pointRateEndTime) {
+    const end = r.pointRateEndTime.replace(' ', 'T') + ':00+09:00';
+    if (new Date(end) > new Date()) {
+      const [, m, d, hm] = r.pointRateEndTime.match(/^\d{4}-(\d{2})-(\d{2}) (\d{2}:\d{2})/) ?? [];
+      b.push(`<span class="badge pt" data-end="${end}">ポイント${r.pointRate}倍${m ? `（${+m}/${+d} ${hm}まで）` : ''}</span>`);
+    }
+  }
+  return b.length ? `<p class="badges">${b.join('')}</p>` : '';
 }
 
 // site.json の categories のうち、比較が1本以上ある分野（並びは site.json の順）
@@ -131,11 +188,32 @@ function indexHtml(list, active) {
       ${site.youtubeUrl ? `<a class="ch-yt" href="${esc(site.youtubeUrl)}" target="_blank" rel="noopener">YouTubeチャンネルを見る</a>` : ''}
     </div>
   </div>
+  ${active ? '' : latestBox(newest)}
   <nav class="ch-tabs">${tabs}</nav>
   <ul class="shorts">${cards}
   </ul>`,
     'wide',
   );
+}
+
+// トップ（すべて）の一番上に出す「最新の動画の比較」。YouTubeのリンク欄から来た人が、
+// 見たばかりの動画の1位にすぐ行けるよう、比較ページと楽天の1位の両方へのボタンを置く
+function latestBox(p) {
+  if (!p) return '';
+  const top = p.ranking[0];
+  return `
+  <section class="latest">
+    ${p.thumb ? `<a class="latest-thumb" href="${esc(p.slug)}.html"><img src="${esc(p.thumb)}" alt=""></a>` : ''}
+    <div class="latest-body">
+      <p class="latest-label">最新の比較</p>
+      <p class="latest-title">${esc(p.title)}</p>
+      ${top ? `<p class="latest-top">1位 ${esc(p.labels[1] ?? shortName(top.name, 24))}<br><b>${formatYen(top.perServing)}円</b> / ${esc(p.servingLabel)}</p>` : ''}
+      <div class="latest-btns">
+        ${top ? `<a class="go" href="${esc(top.url)}" target="_blank" rel="sponsored noopener" data-pos="latest-top1">楽天で1位を見る</a>` : ''}
+        <a class="see" href="${esc(p.slug)}.html">5位まで比べる</a>
+      </div>
+    </div>
+  </section>`;
 }
 
 // チャンネルのアイコンとバナーを、ページ用の大きさにして docs/assets/ に置く
@@ -194,6 +272,19 @@ function analyticsTag() {
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${site.gaId}');</script>`;
 }
 
+// ページ共通の小さなスクリプト
+// ・期限が過ぎた「ポイント◯倍」を隠す（ページは作った時のままなので、見た時点で判断する）
+// ・結論の枠が画面から消えたら、下に1位のボタンを出す
+// ・楽天へのリンクが押されたら、どのボタンか（data-pos）をアナリティクスに「rakuten_click」として送る
+function pageScript() {
+  return `
+document.querySelectorAll('.pt[data-end]').forEach(function(e){if(new Date(e.dataset.end)<new Date())e.remove();});
+var hero=document.getElementById('hero'),sticky=document.getElementById('sticky');
+if(hero&&sticky&&'IntersectionObserver' in window){new IntersectionObserver(function(es){sticky.hidden=es[0].isIntersecting;}).observe(hero);document.body.classList.add('has-sticky');}
+document.addEventListener('click',function(ev){var a=ev.target.closest&&ev.target.closest('a[data-pos]');if(a&&window.gtag)gtag('event','rakuten_click',{pos:a.dataset.pos,page:location.pathname});});
+`;
+}
+
 function layout(title, main, mainClass = '') {
   return `<!doctype html>
 <html lang="ja">
@@ -208,6 +299,7 @@ function layout(title, main, mainClass = '') {
 <main${mainClass ? ` class="${mainClass}"` : ''}>${main}
 </main>
 <footer>${esc(config.siteName)}${site.gaId ? '<br><small>このサイトはアクセス解析にGoogleアナリティクス（Cookie）を使っています。集めた情報は個人を特定しない形で、サイトの改善に使います。</small>' : ''}</footer>
+<script>${pageScript()}</script>
 </body>
 </html>
 `;
@@ -278,6 +370,10 @@ ${block(tags.join(','))}
 
 ■ インスタ（リール）
 インスタ フォルダの リール動画.mp4 と キャプション.txt を使います（BGMはインスタのアプリで付けます）
+リールを出したら、ストーリーズにも載せて「リンク」スタンプを付けます（貼るURLは インスタ フォルダの ストーリーズ用リンク.txt）
+
+■ Threads
+Threads投稿文.txt の文を投稿します（SNS投稿ランチャーの下書きにも入っています）。比較ページへのリンク付きです
 `;
 }
 
@@ -303,6 +399,60 @@ ${lines.join('\n')}
 ${config.voiceCredit ? `音声: ${config.voiceCredit}\n` : ''}
 #楽天 #コスパ #節約 #${name} #${config.siteName}
 `;
+}
+
+// SNSから比較ページへ直接案内するURL。入口ごとの目印（utm）で、アナリティクスでどこから来たかを見分ける
+function pageUrl(p, source, medium) {
+  const u = new URL(`${p.slug}.html`, config.siteUrl);
+  u.searchParams.set('utm_source', source);
+  u.searchParams.set('utm_medium', medium);
+  u.searchParams.set('utm_campaign', p.slug);
+  return u.toString();
+}
+
+// インスタのストーリーズの「リンク」スタンプに貼るURL（ストーリーズのリンクは押せる）
+function storyLink(p) {
+  return `インスタのストーリーズに、リール動画（またはその一部）を載せて「リンク」スタンプを付け、次のURLを貼ってください。
+スタンプの文字は「1位の商品を見る」などにすると押されやすくなります。
+
+${pageUrl(p, 'instagram', 'story')}
+`;
+}
+
+// Threads の投稿文（本文のリンクが押せる）。比較1本につき1回だけ、SNS投稿ランチャーの受け取りフォルダに置く。
+// 同じフォルダに「Threads投稿文.txt」があれば作り直さない（ランチャーの下書きが何度も増えないように）
+async function makeThreadsPost(p) {
+  const LAUNCHER_INBOX = 'C:/SNS投稿ランチャー/受け取り';
+  const marker = path.join(outDir(p), 'Threads投稿文.txt');
+  if (await exists(marker)) return;
+  const name = p.name ?? p.title.split(/[ 　]/)[0];
+  const url = pageUrl(p, 'threads', 'social');
+  const body = (n) => {
+    const lines = p.ranking.slice(0, n).map((r, i) => `${i + 1}位 ${p.labels[i + 1] ?? shortName(r.name, 20)}　${formatYen(r.perServing)}円`);
+    return [
+      `【PR】楽天で売れてる${name}、${p.servingLabel}あたり最安はどれ？`,
+      '',
+      ...lines,
+      ...(p.comment?.length ? ['', p.comment.join('。').replace(/。。/g, '。')] : []),
+      '',
+      `${p.ranking.length}位までの比較と商品はこちら`,
+      url,
+      '',
+      '楽天アフィリエイトを利用しています',
+      '#楽天',
+    ].join('\n');
+  };
+  // Threads は1投稿500文字まで。長いときは載せる順位を減らす
+  let n = 3;
+  while (n > 1 && body(n).length > 500) n--;
+  const text = body(n);
+  await writeFile(marker, text + '\n');
+  if (await exists(LAUNCHER_INBOX)) {
+    const ymd = new Date().toLocaleDateString('ja-JP', { timeZone: 'Asia/Tokyo', year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\//g, '');
+    const posted = path.basename(outDir(p)).endsWith('_投稿済');
+    const json = { 分野: '楽天', テーマ: `${p.title}（${posted ? 'YouTube投稿済み' : 'YouTube未投稿'}）`, 投稿: [{ 投稿先: 'Threads', 本文: text }] };
+    await writeFile(path.join(LAUNCHER_INBOX, `${ymd}_楽天_${name}.json`), JSON.stringify(json, null, 2));
+  }
 }
 
 // 【送料無料】などの飾りを外して短くする
@@ -366,6 +516,38 @@ h1{font-size:22px;margin:16px 0 4px;font-weight:600}
 .bar div{height:100%;background:var(--bar)}
 .item.top .bar div{background:var(--accent)}
 .btn{display:inline-block;margin-top:8px;padding:8px 18px;background:var(--btn);color:var(--btn-text);border-radius:8px;text-decoration:none;font-size:14px;font-weight:600}
+.hero{background:var(--card);border:2px solid var(--accent);border-radius:16px;padding:16px;margin:14px 0;text-align:center}
+.hero-label{margin:0;font-size:14px;font-weight:700;color:var(--accent)}
+.hero-pic{display:block;width:180px;height:180px;margin:10px auto;border-radius:12px;overflow:hidden;background:#fff;border:1px solid var(--line)}
+.hero-pic img{width:100%;height:100%;object-fit:contain;display:block}
+.hero-name{margin:4px 0 0;font-size:17px;font-weight:700;line-height:1.4}
+.hero-per{margin:2px 0;font-size:15px}.hero-per strong{font-size:34px}.hero-per span{color:var(--sub)}
+.hero-meta{margin:0;font-size:13px;color:var(--sub)}
+.hero .badges{justify-content:center}
+.hero-btn{display:block;margin:12px 0 6px;padding:14px;background:#bf0000;color:#fff;border-radius:12px;text-decoration:none;font-size:17px;font-weight:700}
+.hero-more{font-size:14px;color:var(--accent);text-decoration:none}
+.badges{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 2px}
+.badge{font-size:12px;font-weight:700;padding:2px 8px;border-radius:6px;background:#e1f5ee;color:#085041}
+.badge.pt{background:#fdecec;color:#a10000}
+.comment{background:var(--card);border-left:4px solid var(--accent);border-radius:0;padding:10px 14px;margin:0 0 14px}
+.comment-tag{margin:0 0 4px;font-size:12px;font-weight:700;color:var(--accent)}
+.comment p{margin:0;font-size:15px}
+.rank-title{font-size:17px;margin:20px 0 8px}
+.sticky{position:fixed;left:0;right:0;bottom:0;display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--card);border-top:1px solid var(--line);box-shadow:0 -4px 12px rgba(0,0,0,.08);z-index:10}
+.sticky[hidden]{display:none}
+.sticky-text{flex:1;font-size:13px;line-height:1.4}.sticky-text b{font-size:16px}
+.sticky-btn{flex:none;padding:10px 16px;background:#bf0000;color:#fff;border-radius:10px;text-decoration:none;font-weight:700;font-size:15px}
+body.has-sticky footer{padding-bottom:90px}
+.latest{display:flex;gap:14px;background:var(--card);border:2px solid var(--accent);border-radius:16px;padding:14px;margin:16px 0 4px}
+.latest-thumb{flex:none;width:110px;aspect-ratio:9/16;border-radius:10px;overflow:hidden;background:var(--line)}
+.latest-thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.latest-body{min-width:0;display:flex;flex-direction:column;gap:4px}
+.latest-label{margin:0;font-size:12px;font-weight:700;color:var(--accent)}
+.latest-title{margin:0;font-size:17px;font-weight:700;line-height:1.4}
+.latest-top{margin:0;font-size:14px}
+.latest-btns{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+.latest-btns a{padding:9px 14px;border-radius:10px;text-decoration:none;font-weight:700;font-size:14px}
+.latest-btns .go{background:#bf0000;color:#fff}.latest-btns .see{background:var(--bg);color:var(--accent);border:1px solid var(--accent)}
 main.wide{max-width:1100px}
 .ch-banner{margin-top:8px;border-radius:14px;overflow:hidden;aspect-ratio:6.2/1;min-height:72px}
 .ch-banner img{width:100%;height:100%;object-fit:cover;display:block}
