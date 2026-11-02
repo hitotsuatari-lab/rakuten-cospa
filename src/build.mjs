@@ -61,6 +61,11 @@ for (const p of pages) {
   await writeFile(path.join(outDir(p), 'インスタ', 'ストーリーズ用リンク.txt'), storyLink(p));
   await makeThreadsPost(p);
 }
+// SNS に貼るための、全部の比較ページの URL 一覧（新しい順）。Threads 用の目印付きと、目印なしの両方
+const urlList = pages
+  .map((p) => `■ ${p.title}\nThreads用: ${pageUrl(p, 'threads', 'social')}\nそのまま: ${new URL(`${p.slug}.html`, config.siteUrl)}`)
+  .join('\n\n');
+await writeFile(path.join(OUT, '公開ページのURL一覧.txt'), `公開ページのURL一覧（${pages.length}ページ・新しい順）\nトップ: ${config.siteUrl}\n\n${urlList}\n`);
 console.log(`${pages.length} ページを docs/ に、投稿情報.txt を out/<取得日>_<テーマ>/ に作りました`);
 
 // 比較ページ。SNSから来た人がスマホの最初の画面で決められるよう、
