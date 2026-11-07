@@ -5,6 +5,7 @@ import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parseAmount, parseCount } from './amount.mjs';
+import { rakutenLink } from './afflink.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const ENDPOINT = 'https://openapi.rakuten.co.jp/ichibams/api/IchibaItem/Search/20260701';
@@ -49,7 +50,9 @@ for (const item of rawItems) {
     ...(amountLabel ? { amountLabel } : {}),
     servings: Math.round(servings * 10) / 10,
     perServing: Math.round((item.itemPrice / servings) * 10) / 10,
-    url: item.affiliateUrl || item.itemUrl,
+    // 管理画面と同じ形のリンク（本人のアフィリエイトID入り）。APIの affiliateUrl は使わない（afflink.mjs の説明）
+    url: rakutenLink(item.itemUrl),
+    itemUrl: item.itemUrl.split('?')[0],
     image: itemImage(item),
     ...salesInfo(item),
     reviewCount: item.reviewCount,

@@ -7,11 +7,10 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import ffmpegPath from 'ffmpeg-static';
 import { formatAmount, formatYen } from './amount.mjs';
-import { outDir } from './outdir.mjs';
+import { outDir, isMoved, OUT, DRIVE_DONE } from './outdir.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const DOCS = path.join(ROOT, 'docs');
-const OUT = path.join(ROOT, 'out');
 
 const config = await loadSiteConfig();
 const pages = [];
@@ -51,6 +50,8 @@ for (const c of usedCategories()) {
 }
 for (const p of pages) {
   await writeFile(path.join(DOCS, `${p.slug}.html`), topicHtml(p));
+  // 投稿が終わってドライブへ移したものは、投稿情報も Threads の投稿文も作り直さない
+  if (isMoved(outDir(p))) continue;
   // 動画と同じ日付とテーマのフォルダ（out/20261016_rice/ など）に入れる
   await mkdir(outDir(p), { recursive: true });
   // 投稿の画面で上から順に入力できる形（YouTube自動作成の投稿情報.txt と同じ形。2026-10-22 に本人が頼んだ）
@@ -243,27 +244,36 @@ async function makeChannelAssets() {
 
 // その比較のいちばん新しい動画の最初の画面（1.5秒目）をサムネイルにする
 async function makeThumbnail(p) {
-  let dirs = [];
-  try {
-    dirs = (await readdir(OUT)).filter((d) => d.endsWith(`_${p.slug}`) || d.endsWith(`_${p.slug}_投稿済`)).sort().reverse();
-  } catch {}
+  // out と、投稿済みを移したドライブのフォルダの両方から探す（新しい日付が先）
+  const dirs = [];
+  for (const base of [OUT, DRIVE_DONE]) {
+    try {
+      for (const d of await readdir(base)) {
+        if (d.endsWith(`_${p.slug}`) || d.endsWith(`_${p.slug}_投稿済`)) dirs.push(path.join(base, d));
+      }
+    } catch {}
+  }
+  dirs.sort((a, b) => path.basename(b).localeCompare(path.basename(a)));
+  const version = (dir) => path.basename(dir).split('_')[0];
   for (const d of dirs) {
-    const video = path.join(OUT, d, 'ショート動画.mp4');
+    const video = path.join(d, 'ショート動画.mp4');
     if (!(await exists(video))) continue;
     await mkdir(path.join(DOCS, 'thumbs'), { recursive: true });
     const r = spawnSync(ffmpegPath, ['-y', '-loglevel', 'error', '-ss', '1.5', '-i', video, '-frames:v', '1',
       '-vf', 'scale=360:640', '-q:v', '3', path.join(DOCS, 'thumbs', `${p.slug}.jpg`)]);
     // 作り直したときにブラウザが古い画像を出さないよう、日付を付ける
-    if (r.status === 0) return `thumbs/${p.slug}.jpg?v=${d.split('_')[0]}`;
+    if (r.status === 0) return `thumbs/${p.slug}.jpg?v=${version(d)}`;
   }
   // 動画をまだ作っていない比較は、video/thumb.mjs が作った「ページ用サムネイル.jpg」を使う
   for (const d of dirs) {
-    const still = path.join(OUT, d, 'ページ用サムネイル.jpg');
+    const still = path.join(d, 'ページ用サムネイル.jpg');
     if (!(await exists(still))) continue;
     await mkdir(path.join(DOCS, 'thumbs'), { recursive: true });
     const r = spawnSync(ffmpegPath, ['-y', '-loglevel', 'error', '-i', still, '-vf', 'scale=360:640', '-q:v', '3', path.join(DOCS, 'thumbs', `${p.slug}.jpg`)]);
-    if (r.status === 0) return `thumbs/${p.slug}.jpg?v=${d.split('_')[0]}`;
+    if (r.status === 0) return `thumbs/${p.slug}.jpg?v=${version(d)}`;
   }
+  // ドライブが起動していないなどで見つからないときは、前に作ったサムネイルをそのまま使う
+  if (await exists(path.join(DOCS, 'thumbs', `${p.slug}.jpg`))) return `thumbs/${p.slug}.jpg?v=${version(outDir(p))}`;
   return null;
 }
 
