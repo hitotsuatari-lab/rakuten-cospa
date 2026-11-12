@@ -62,6 +62,18 @@ for (const p of pages) {
   await writeFile(path.join(outDir(p), 'インスタ', 'ストーリーズ用リンク.txt'), storyLink(p));
   await makeThreadsPost(p);
 }
+// サイトの地図（sitemap.xml）。Search Console の「サイトマップ」にこの名前を送ると、Google が全ページを見つけやすくなる（2026-11-12 から）
+if (config.siteUrl) {
+  const day = (s) => String(s).slice(0, 10);
+  const newestDay = pages.length ? day(pages[0].fetchedAt) : '';
+  const entries = [{ file: '', mod: newestDay }]
+    .concat(usedCategories().map((c) => ({ file: `${c.id}.html`, mod: day(pages.find((p) => p.category === c.id).fetchedAt) })))
+    .concat(pages.map((p) => ({ file: `${p.slug}.html`, mod: day(p.fetchedAt) })));
+  const xml = entries
+    .map((e) => `  <url><loc>${esc(new URL(e.file, config.siteUrl).href)}</loc>${/^\d{4}-\d{2}-\d{2}$/.test(e.mod) ? `<lastmod>${e.mod}</lastmod>` : ''}</url>`)
+    .join('\n');
+  await writeFile(path.join(DOCS, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${xml}\n</urlset>\n`);
+}
 // SNS に貼るための、全部の比較ページの URL 一覧（新しい順）。Threads 用の目印付きと、目印なしの両方
 const urlList = pages
   .map((p) => `■ ${p.title}\nThreads用: ${pageUrl(p, 'threads', 'social')}\nそのまま: ${new URL(`${p.slug}.html`, config.siteUrl)}`)
@@ -137,6 +149,14 @@ function topicHtml(p) {
   <ol class="ranking">${rows}
   </ol>
   <p class="note">価格は調査時点のものです。最新の価格・送料・ポイントはリンク先の商品ページで確認してください。${esc(p.servingLabel)}あたりの値段は、商品名に書かれた内容量から計算しています。</p>${sticky}`,
+    '',
+    {
+      file: `${p.slug}.html`,
+      description:
+        `楽天の売れ筋${p.ranking.length}商品を「${p.servingLabel}あたり」の値段で比べました。` +
+        (top ? `いちばん安いのは${nameOf(top, 0, 30)}で、${p.servingLabel}あたり${formatYen(top.perServing)}円。` : '') +
+        `${formatDate(p.fetchedAt)}時点の価格です。`,
+    },
   );
 }
 
@@ -199,6 +219,12 @@ function indexHtml(list, active) {
   <ul class="shorts">${cards}
   </ul>`,
     'wide',
+    {
+      file: active ? `${active.id}.html` : '',
+      description: active
+        ? `${active.name}の「1個あたり・1食あたり」の値段比べの一覧（${list.length}本）。楽天の売れ筋を、内容量で割った値段で比べています。`
+        : site.description ?? '',
+    },
   );
 }
 
@@ -308,13 +334,16 @@ document.addEventListener('click',function(ev){var a=ev.target.closest&&ev.targe
 `;
 }
 
-function layout(title, main, mainClass = '') {
+// meta: { description（検索結果に出る説明文）, file（このページのファイル名。トップは ''）}。
+// Google に見つけてもらうため（2026-11-12。Search Console で1ページも登録されていなかった）
+function layout(title, main, mainClass = '', meta = {}) {
+  const canonical = config.siteUrl && meta.file !== undefined ? new URL(meta.file, config.siteUrl).href : '';
   return `<!doctype html>
 <html lang="ja">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>${esc(title)}</title>
+<title>${esc(title)}</title>${meta.description ? `\n<meta name="description" content="${esc(meta.description)}">` : ''}${canonical ? `\n<link rel="canonical" href="${esc(canonical)}">` : ''}
 <link rel="stylesheet" href="style.css">${analyticsTag()}
 </head>
 <body>
@@ -396,7 +425,7 @@ ${block(tags.join(','))}
 リールを出したら、ストーリーズにも載せて「リンク」スタンプを付けます（貼るURLは インスタ フォルダの ストーリーズ用リンク.txt）
 
 ■ Threads
-Threads投稿文.txt の文を投稿します（SNS投稿ランチャーの下書きにも入っています）。比較ページへのリンク付きです
+SNS の宣伝は muse さんが一括で出します（2026-11-08 から）。Threads投稿文.txt は muse さんに渡す材料です。比較ページへのリンク付きです
 `;
 }
 
@@ -442,10 +471,9 @@ ${pageUrl(p, 'instagram', 'story')}
 `;
 }
 
-// Threads の投稿文（本文のリンクが押せる）。比較1本につき1回だけ、SNS投稿ランチャーの受け取りフォルダに置く。
-// 同じフォルダに「Threads投稿文.txt」があれば作り直さない（ランチャーの下書きが何度も増えないように）
+// Threads の投稿文（本文のリンクが押せる）。比較1本につき1回だけ作る。同じフォルダに「Threads投稿文.txt」があれば作り直さない。
+// 2026-11-08 から SNS の宣伝は muse さんが一括で出すので、SNS投稿ランチャーの受け取りフォルダには置かない（文は muse さんへの材料として残す）
 async function makeThreadsPost(p) {
-  const LAUNCHER_INBOX = 'C:/SNS投稿ランチャー/受け取り';
   const marker = path.join(outDir(p), 'Threads投稿文.txt');
   if (await exists(marker)) return;
   const name = p.name ?? p.title.split(/[ 　]/)[0];
@@ -470,12 +498,6 @@ async function makeThreadsPost(p) {
   while (n > 1 && body(n).length > 500) n--;
   const text = body(n);
   await writeFile(marker, text + '\n');
-  if (await exists(LAUNCHER_INBOX)) {
-    const ymd = new Date().toLocaleDateString('ja-JP', { timeZone: 'Asia/Tokyo', year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\//g, '');
-    const posted = path.basename(outDir(p)).endsWith('_投稿済');
-    const json = { 分野: '楽天', テーマ: `${p.title}（${posted ? 'YouTube投稿済み' : 'YouTube未投稿'}）`, 投稿: [{ 投稿先: 'Threads', 本文: text }] };
-    await writeFile(path.join(LAUNCHER_INBOX, `${ymd}_楽天_${name}.json`), JSON.stringify(json, null, 2));
-  }
 }
 
 // 【送料無料】などの飾りを外して短くする
